@@ -1,0 +1,10 @@
+Resources:
+  MySNSTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      TopicName: !Ref TopicName
+
+Parameters:
+  TopicName:
+    Type: String
+    Description: The name of the SNS topic

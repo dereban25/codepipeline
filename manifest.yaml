@@ -1,0 +1,43 @@
+### SNS Topic
+  - name: MySNSTopic
+    resource_file: templates/sns-topic.yaml
+    deploy_method: stack_set
+    deployment_targets:
+      accounts:
+        - 227727472492 # Network account
+    parameters:
+      - parameter_key: TopicName
+        parameter_value: my-sns-topic
+
+### Lambda Function
+  - name: MyLambdaFunction
+    resource_file: templates/lambda-function.yaml
+    deploy_method: stack_set
+    deployment_targets:
+      accounts:
+        - 227727472492 # Network account
+    parameters:
+      - parameter_key: FunctionName
+        parameter_value: my-lambda-function
+
+### Patch Baseline
+  - name: MyPatchBaseline
+    resource_file: templates/patch-baseline.yaml
+    deploy_method: stack_set
+    deployment_targets:
+      accounts:
+        - 227727472492 # Network account
+    parameters:
+      - parameter_key: BaselineName
+        parameter_value: my-patch-baseline
+
+### Patch Group
+  - name: MyPatchGroup
+    resource_file: templates/patch-group.yaml
+    deploy_method: stack_set
+    deployment_targets:
+      accounts:
+        - 227727472492 # Network account
+    parameters:
+      - parameter_key: GroupName
+        parameter_value: my-patch-group
