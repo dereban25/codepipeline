@@ -1,0 +1,17 @@
+{
+    "Parameters": {
+        "IAMRoleName": "RoleForSSMPatchingAutomation",
+        "IAMPolicyName": "PolicyForSSMPatchingAutomation",
+        "SMMDocumentName": "AWSPatchInstanceWithRollbackAndSNS",
+        "SNSTopicName": "SNSForPatch",
+        "SNSDisplayName": "SNSForPatch",
+        "SNSEmail": "yevhenii321.it@gmail.com",
+        "AssociationName": "PatchingAssociation",
+        "AssociationTagKey": "tag:Stage",
+        "AssociationTagValue": "Development",
+        "AssociationScheduleExpression": "cron(0 0 * * ? *)",
+        "AssociationMaxConcurrency": "25",
+        "AssociationMaxErrors": "1",
+        "AssociationDocumentVersion": "$DEFAULT"
+    }
+}
