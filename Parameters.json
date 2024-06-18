@@ -5,7 +5,7 @@
         "SMMDocumentName": "AWSPatchInstanceWithRollbackAndSNS",
         "SNSTopicName": "SNSForPatch",
         "SNSDisplayName": "SNSForPatch",
-        "SNSEmail": "yevhenii321.it@gmail.com",
+        "SNSEmail": "maxdcloudops@gmail.com",
         "AssociationName": "PatchingAssociation",
         "AssociationTagKey": "tag:Stage",
         "AssociationTagValue": "Development",
