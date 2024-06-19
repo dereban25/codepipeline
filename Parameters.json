@@ -9,7 +9,7 @@
         "AssociationName": "PatchingAssociation",
         "AssociationTagKey": "tag:Stage",
         "AssociationTagValue": "Development",
-        "AssociationScheduleExpression": "cron(0 0 * * ? *)",
+        "AssociationScheduleExpression": "cron(5 0 * * ? *)",
         "AssociationMaxConcurrency": "25",
         "AssociationMaxErrors": "1",
         "AssociationDocumentVersion": "$DEFAULT"
