@@ -1,0 +1,142 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": [
+				"ec2:CreateTags",
+				"ec2:DescribeInstanceCreditSpecifications",
+				"ec2:DescribeInstances",
+				"ec2:DescribeNetworkInterfaces",
+				"ssm:DeleteAssociation",
+				"ssm:ListAssociations",
+				"ssm:ListTagsForResource"
+			],
+			"Resource": "*"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"cloudwatch:DeleteAlarms",
+				"cloudwatch:DescribeAlarms",
+				"cloudwatch:PutMetricAlarm"
+			],
+			"Resource": "arn:aws:cloudwatch:${Region}:${Account}:alarm:${AlarmName}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"dynamodb:CreateTable",
+				"dynamodb:DeleteTable",
+				"dynamodb:DescribeContinuousBackups",
+				"dynamodb:DescribeContributorInsights",
+				"dynamodb:DescribeKinesisStreamingDestination",
+				"dynamodb:DescribeTable",
+				"dynamodb:DescribeTimeToLive",
+				"dynamodb:GetResourcePolicy",
+				"dynamodb:ListTagsOfResource"
+			],
+			"Resource": "arn:aws:dynamodb:${Region}:${Account}:table/${TableName}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": "dynamodb:GetResourcePolicy",
+			"Resource": "arn:aws:dynamodb:${Region}:${Account}:table/${TableName}/stream/${StreamLabel}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"ec2:DescribeInstanceAttribute",
+				"ec2:RunInstances",
+				"ec2:TerminateInstances"
+			],
+			"Resource": "arn:aws:ec2:${Region}:${Account}:instance/${InstanceId}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": "ec2:RunInstances",
+			"Resource": "arn:aws:ec2:${Region}:${Account}:network-interface/${NetworkInterfaceId}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": "ec2:RunInstances",
+			"Resource": "arn:aws:ec2:${Region}:${Account}:security-group/${SecurityGroupId}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": "ec2:RunInstances",
+			"Resource": "arn:aws:ec2:${Region}:${Account}:subnet/${SubnetId}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": "ec2:RunInstances",
+			"Resource": "arn:aws:ec2:${Region}::image/${ImageId}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"iam:AttachRolePolicy",
+				"iam:CreateRole",
+				"iam:DeleteRole",
+				"iam:DeleteRolePolicy",
+				"iam:DetachRolePolicy",
+				"iam:GetRole",
+				"iam:GetRolePolicy",
+				"iam:ListAttachedRolePolicies",
+				"iam:ListRolePolicies",
+				"iam:PutRolePolicy"
+			],
+			"Resource": "arn:aws:iam::${Account}:role/${RoleNameWithPath}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"kms:CreateGrant",
+				"kms:Decrypt",
+				"kms:DescribeKey",
+				"kms:Encrypt"
+			],
+			"Resource": "arn:aws:kms:${Region}:${Account}:key/${KeyId}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"lambda:AddPermission",
+				"lambda:CreateFunction",
+				"lambda:CreateFunctionUrlConfig",
+				"lambda:DeleteFunction",
+				"lambda:DeleteFunctionUrlConfig",
+				"lambda:GetFunction",
+				"lambda:GetFunctionCodeSigningConfig",
+				"lambda:GetFunctionUrlConfig",
+				"lambda:GetRuntimeManagementConfig",
+				"lambda:RemovePermission"
+			],
+			"Resource": "arn:aws:lambda:${Region}:${Account}:function:${FunctionName}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"ssm:CreateAssociation",
+				"ssm:UpdateAssociation"
+			],
+			"Resource": "arn:aws:ssm:${Region}:${Account}:association/${AssociationId}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": [
+				"ssm:CreateAssociation",
+				"ssm:CreateDocument",
+				"ssm:DeleteDocument",
+				"ssm:DescribeDocument",
+				"ssm:GetDocument"
+			],
+			"Resource": "arn:aws:ssm:${Region}:${Account}:document/${DocumentName}"
+		},
+		{
+			"Effect": "Allow",
+			"Action": "ssm:GetParameters",
+			"Resource": "arn:aws:ssm:${Region}:${Account}:parameter/${ParameterNameWithoutLeadingSlash}"
+		}
+	]
+}
