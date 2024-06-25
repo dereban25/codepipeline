@@ -1,7 +1,7 @@
 {
     "Parameters": {
-        "IAMRoleName": "RoleForSSMPatchingAutomation",
-        "IAMPolicyName": "PolicyForSSMPatchingAutomation",
+        "IAMRoleName": "RoleForSSMPatchingAutomation1",
+        "IAMPolicyName": "PolicyForSSMPatchingAutomation1",
         "SMMDocumentName": "AWSPatchInstanceWithRollbackAndSNS",
         "SNSTopicName": "SNSForPatch",
         "SNSDisplayName": "SNSForPatch",
