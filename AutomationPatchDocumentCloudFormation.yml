@@ -41,7 +41,6 @@ Parameters:
   AssociationScheduleExpression:
     Type: String
     Description: Cron expression for scheduling the association
-    Default: 'cron(0 0 * * ? *)'
   AssociationMaxConcurrency:
     Type: Number
     Description: Maximum number of targets this Automation task can run on concurrently
