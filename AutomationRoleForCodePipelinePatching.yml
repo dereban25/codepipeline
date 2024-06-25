@@ -3,7 +3,7 @@ Resources:
   IAMRoleCP:
     Type: 'AWS::IAM::Role'
     Properties: 
-      RoleName: AWSCodePipelinePatchingRole1
+      RoleName: AWSCodePipelinePatchingRole
       AssumeRolePolicyDocument: 
         Version: '2012-10-17'
         Statement: 
@@ -14,7 +14,7 @@ Resources:
   IAMPolicy:
     Type: 'AWS::IAM::Policy'
     Properties: 
-      PolicyName: AWSCodePipelinePatchingPolicy1
+      PolicyName: AWSCodePipelinePatchingPolicy
       Roles: 
         - !Ref IAMRoleCP
       PolicyDocument: 

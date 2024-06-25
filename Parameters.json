@@ -1,12 +1,12 @@
 {
     "Parameters": {
-        "IAMRoleName": "RoleForSSMPatchingAutomation1",
-        "IAMPolicyName": "PolicyForSSMPatchingAutomation1",
-        "SMMDocumentName": "AWSPatchInstanceWithRollbackAndSNS1",
-        "SNSTopicName": "SNSForPatch1",
-        "SNSDisplayName": "SNSForPatch1",
+        "IAMRoleName": "RoleForSSMPatchingAutomation",
+        "IAMPolicyName": "PolicyForSSMPatchingAutomation",
+        "SMMDocumentName": "AWSPatchInstanceWithRollbackAndSNS",
+        "SNSTopicName": "SNSForPatch",
+        "SNSDisplayName": "SNSForPatch",
         "SNSEmail": "maxdcloudops@gmail.com",
-        "AssociationName": "PatchingAssociation1",
+        "AssociationName": "PatchingAssociation",
         "AssociationTagKey": "tag:Stage",
         "AssociationTagValue": "Development",
         "AssociationScheduleExpression": "cron(0 0 * * ? *)",
