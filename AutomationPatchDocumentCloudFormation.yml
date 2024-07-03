@@ -58,7 +58,7 @@ Resources:
   # EC2:
   #   Type: AWS::EC2::Instance
   #   Properties:
-  #     AvailabilityZone: us-east-1a
+  #     AvailabilityZone: us-west-2a
   #     ImageId: ami-0e001c9271cf7f3b9
   #     InstanceType: t2.micro
   #     KeyName: hello
@@ -210,7 +210,7 @@ Resources:
             inputs:
               Message: '{{ InstanceId }} - Start Patching'
               Service: sns
-              TopicArn: arn:aws:sns:us-east-1:007695491693:Max
+              TopicArn: arn:aws:sns:us-west-2:007695491693:Max
               Api: Publish
           - name: createDocumentStack
             action: aws:createStack
@@ -601,7 +601,7 @@ Resources:
             inputs:
               Message: '{{ InstanceId }} - Patching False. Restoring successfully. '
               Service: sns
-              TopicArn: arn:aws:sns:us-east-1:007695491693:Max
+              TopicArn: arn:aws:sns:us-west-2:007695491693:Max
               Api: Publish
           - name: deleteCloudFormationTemplate
             action: aws:deleteStack
@@ -616,7 +616,7 @@ Resources:
             inputs:
               Message: '{{ InstanceId }} - Patching has been successfully installed.'
               Service: sns
-              TopicArn: arn:aws:sns:us-east-1:007695491693:Max
+              TopicArn: arn:aws:sns:us-west-2:007695491693:Max
               Api: Publish
         outputs:
           - IdentifyRootVolume.Payload
