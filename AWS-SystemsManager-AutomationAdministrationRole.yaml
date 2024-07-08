@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "AWS CloudFormation Template for AWS-SystemsManager-AutomationAdministrationRole"
+Resources:
+  DummyServer:
+    Type: AWS::IAM::Role
+    Properties:
+        AssumeRolePolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+            - Effect: "Allow"
+              Principal:
+                AWS: "arn:aws:iam::533267240126:role/AWS-SystemsManager-AutomationExecutionRole"
+              Action: "sts:AssumeRole"
+            - Effect: "Allow"
+              Principal:
+                Service: "ssm.amazonaws.com"
+              Action: "sts:AssumeRole"
+        Path: "/"
+        RoleName: "MAKSTEST"
+        Policies:
+          - PolicyName: "SSM-Automation-Administration"
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: "Allow"
+                  Sid: "STS"
+                  Action: "sts:AssumeRole"
+                  Resource: "arn:aws:iam::*:role/AWS-SystemsManager-AutomationExecutionRole"
