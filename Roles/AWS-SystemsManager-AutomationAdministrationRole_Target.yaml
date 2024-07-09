@@ -1,0 +1,117 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "AWS CloudFormation Template for AWS-SystemsManager-AutomationAdministrationRole"
+Resources:
+  SSMAutomationAdministrationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: SSMAutomationAdministration
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              AWS:
+                - "arn:aws:iam::{account_id_root}:role/Lambda-DeleteSnapshot"
+                - "arn:aws:iam::{account_id_root}:role/Lambda-SSM-RunMultiAccountsPatching"
+                - "arn:aws:iam::{account_id_root}:role/AWS-SystemsManager-AutomationAdministrationRole"
+            Action: "sts:AssumeRole"
+          - Effect: "Allow"
+            Principal:
+              Service: "ssm.amazonaws.com"
+            Action: "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "aws:SourceAccount": "{account_id_target}"
+              ArnLike:
+                "aws:SourceArn": "arn:aws:ssm:*:{account_id_target}:automation-execution/*"
+  IAMPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: ExecutionPolicy
+      Roles:
+        - !Ref SSMAutomationAdministrationRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: EC2
+            Effect: Allow
+            Action:
+              - ec2:CreateTags
+              - ec2:CreateSnapshot
+              - ec2:DescribeSnapshots
+              - ec2:DescribeInstanceStatus
+              - ec2:DescribeVolumes
+              - ec2:DeleteSnapshot
+              - ec2:DescribeSnapshotAttribute
+            Resource: "*"
+          - Sid: IAM
+            Effect: Allow
+            Action:
+              - iam:DeleteRole
+              - iam:GetRole
+              - iam:GetRolePolicy
+              - iam:ListAttachedRolePolicies
+              - iam:ListRolePolicies
+              - iam:CreateRole
+              - iam:PutRolePolicy
+              - iam:DeleteRolePolicy
+            Resource: "*"
+          - Effect: Allow
+            Action: iam:PassRole
+            Resource:
+              - arn:aws:iam::{account_id_target}:role/AWS-SystemsManager-AutomationExecutionRole
+              - arn:aws:iam::{account_id_target}:role/PatchInstanceWithRollbackStack*
+          - Sid: Lambda
+            Effect: Allow
+            Action:
+              - lambda:DeleteFunction
+              - lambda:GetFunction
+              - lambda:GetRuntimeManagementConfig
+              - lambda:CreateFunction
+              - lambda:InvokeFunction
+              - lambda:GetFunctionCodeSigningConfig
+            Resource: "*"
+          - Sid: SSM
+            Effect: Allow
+            Action:
+              - ssm:SendCommand
+              - ssm:DescribeInstanceInformation
+              - ssm:ListCommands
+              - ssm:ListCommandInvocations
+              - ssm:StartAutomationExecution
+              - ssm:DescribeAutomationExecutions
+              - ssm:GetAutomationExecution
+              - ssm:DescribeAutomationStepExecutions
+            Resource: "*"
+          - Sid: SNS
+            Effect: Allow
+            Action:
+              - sns:Publish
+            Resource: arn:aws:sns:us-east-1:{account_id_root}:Max
+          - Sid: CloudFormation
+            Effect: Allow
+            Action:
+              - cloudformation:CreateStack
+              - cloudformation:DeleteStack
+              - cloudformation:DescribeStacks
+            Resource: "*"
+          - Sid: S3
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:ListBucket
+            Resource:
+              - arn:aws:s3:::patching/*
+          - Sid: ResourceGroupTaggingAPI
+            Effect: Allow
+            Action:
+              - tag:GetResources
+            Resource:
+              - "*"
+          - Sid: AWSResourceGroups
+            Effect: Allow
+            Action:
+              - resource-groups:ListGroupResources
+            Resource:
+              - "*"

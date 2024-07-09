@@ -9,14 +9,14 @@ Resources:
             Statement:
             - Effect: "Allow"
               Principal:
-                AWS: "arn:aws:iam::533267240126:role/AWS-SystemsManager-AutomationExecutionRole"
+                AWS: "arn:aws:iam::{account_id_root}:role/AWS-SystemsManager-AutomationExecutionRole"
               Action: "sts:AssumeRole"
             - Effect: "Allow"
               Principal:
                 Service: "ssm.amazonaws.com"
               Action: "sts:AssumeRole"
         Path: "/"
-        RoleName: "MAKSTEST"
+        RoleName: "SSMAutomationAdministration"
         Policies:
           - PolicyName: "SSM-Automation-Administration"
             PolicyDocument:

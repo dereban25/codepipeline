@@ -1,0 +1,7 @@
+Lambda-DeleteSnapshot  ++
+Lambda-SSM-RunMultiAccountsPatchingRole  ++
+AWS-SystemsManager-AutomationAdministrationRole ++
+
+
+Remote role
+AWS-SystemsManager-AutomationExecutionRole
