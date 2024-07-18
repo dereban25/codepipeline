@@ -110,6 +110,7 @@ Resources:
                 Version: '1'
               InputArtifacts:
                 - Name: SourceArtifact
+                - Name: TemplateSource
               Configuration:
                 ActionMode: CREATE_UPDATE
                 StackName: Patching
