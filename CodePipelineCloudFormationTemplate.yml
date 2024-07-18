@@ -114,13 +114,13 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: Patching
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: MainCloudFormationTemplate.yml
+                TemplatePath: !Sub SourceArtifact::${TemplateName}
                 RoleArn: arn:aws:iam::007695491693:role/AWS-SystemsManager-AutomationExecutionRole
-                # ParameterOverrides: !Sub |
-                #   {
-                #     "ArtifactName": "SourceArtifact",
-                #     "FileName":  'Parameters.json'
-                #   }
+                ParameterOverrides: !Sub |
+                  {
+                    "ArtifactName": "SourceArtifact",
+                    "FileName": "${ParametersName}"
+                  }
               RunOrder: 1
       ExecutionMode: QUEUED
 

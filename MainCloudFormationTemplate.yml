@@ -1,6 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
-
   SNSTopicName:
     Description: Name for the SNS topic
     Type: String
@@ -13,8 +12,16 @@ Parameters:
     Description: Email address for SNS subscription
     Type: String
     Default: 'maxdcloudops@gmail.com'
+  FileName:
+    Description: 'The name of the parameter file (required by CodePipeline)'
+    Type: String
+    Default: 'Parameters.json'
+  ArtifactName:
+    Description: 'The name of the source artifact (required by CodePipeline)'
+    Type: String
+    Default: 'SourceArtifact'
 
-Resources: 
+Resources:
   SNSTopic:
     Type: AWS::SNS::Topic
     Properties:
