@@ -115,12 +115,8 @@ Resources:
                 StackName: Patching
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: !Sub SourceArtifact::${TemplateName}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
                 RoleArn: arn:aws:iam::007695491693:role/AWS-SystemsManager-AutomationExecutionRole
-                ParameterOverrides: !Sub |
-                  {
-                    "ArtifactName": "SourceArtifact",
-                    "FileName": "${ParametersName}"
-                  }
               RunOrder: 1
       ExecutionMode: QUEUED
 
