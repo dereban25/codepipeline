@@ -12,7 +12,7 @@ Parameters:
   SNSEmail:
     Description: Email address for SNS subscription
     Type: String
-    Default: maxdcloudops@gmail.com
+    Default: 'maxdcloudops@gmail.com'
 
 Resources: 
   SNSTopic:
