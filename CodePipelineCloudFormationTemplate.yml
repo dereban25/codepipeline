@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  CodestarConnection:
+    Type: String
+    Description: 'ARN of the CodeStar connection for GitHub'
+    Default: 'arn:aws:codestar-connections:us-east-1:007695491693:connection/b965019a-d6b5-4bfa-ab0b-2596e6996504'
+  GitHubFullRepositoryId:
+    Type: String
+    Description: 'Repository name. Example: github_username/repository_name'
+    Default: 'dereban25/codepipeline'
+  GitHubBranchName:
+    Type: String
+    Description: Specify the branch name
+    Default: 'patching'
+  TemplateName: 
+    Type: String
+    Description: 'Specify the CloudFormation template name, for example: MainCloudFormationTemplate.yml'
+    Default: 'MainCloudFormationTemplate.yml'
+  ParametersName: 
+    Type: String
+    Description: 'Specify the parameters json file name, for example: Parameters.json'
+    Default: 'Parameters.json'
+
+Resources:
+  PipelineBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'codepipeline-${AWS::AccountId}-${AWS::Region}'
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Enabled
+
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWSCodePipelineServiceRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+
+  CodePipelineServiceRoleInlinePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CodePipelineServiceRoleInlinePolicy
+      Roles:
+        - Ref: CodePipelineServiceRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:CreateBucket
+              - s3:DeleteBucket
+              - s3:PutObject
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - codestar-connections:UseConnection
+              - codestar-connections:GetConnection
+              - codestar-connections:ListConnections
+              - codestar-connections:CreateConnection
+              - codestar-connections:DeleteConnection
+            Resource: !Ref CodestarConnection
+          - Effect: Allow
+            Action:
+              - cloudformation:DescribeStacks
+              - cloudformation:CreateStack
+              - cloudformation:DeleteStack
+              - cloudformation:UpdateStack
+            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/CodePipelineCloudFormation/*'
+
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: Patching
+      RoleArn: !GetAtt CodePipelineServiceRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref PipelineBucket
+      PipelineType: V2
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeStarSourceConnection
+                Version: '1'
+              OutputArtifacts:
+                - Name: SourceArtifact
+              Configuration:
+                ConnectionArn: !Ref CodestarConnection
+                FullRepositoryId: !Ref GitHubFullRepositoryId
+                BranchName: !Ref GitHubBranchName
+                DetectChanges: false
+              RunOrder: 1
+
+        - Name: Deploy
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: '1'
+              InputArtifacts:
+                - Name: SourceArtifact
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: Patching
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: !Sub SourceArtifact::${TemplateName}
+                RoleArn: arn:aws:iam::007695491693:role/cdk-hnb659fds-cfn-exec-role-007695491693-us-east-1
+                ParameterOverrides: !Sub |
+                  {
+                    "ArtifactName": "SourceArtifact",
+                    "FileName": "${ParametersName}"
+                  }
+              RunOrder: 1
+      ExecutionMode: QUEUED
+
+Outputs:
+  CodePipelineName:
+    Description: "The name of the CodePipeline"
+    Value: !Ref CodePipeline

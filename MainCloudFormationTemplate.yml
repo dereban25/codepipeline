@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+
+  SNSTopicName:
+    Description: Name for the SNS topic
+    Type: String
+    Default: SNSForPatch
+  SNSDisplayName:
+    Description: Display name for the SNS topic
+    Type: String
+    Default: SNSForPatch
+  SNSEmail:
+    Description: Email address for SNS subscription
+    Type: String
+
+Resources: 
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Ref SNSTopicName
+      DisplayName: !Ref SNSDisplayName
+  SNSSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !Ref SNSEmail
+      Protocol: email
+      TopicArn: !Ref SNSTopic
