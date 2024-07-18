@@ -119,7 +119,7 @@ Resources:
                 ParameterOverrides: !Sub |
                   {
                     "ArtifactName": "SourceArtifact",
-                    "FileName": !Sub "${ParametersName}"
+                    "FileName":  'Parameters.json'
                   }
               RunOrder: 1
       ExecutionMode: QUEUED
