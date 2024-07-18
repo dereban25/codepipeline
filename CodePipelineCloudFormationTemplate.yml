@@ -110,13 +110,12 @@ Resources:
                 Version: '1'
               InputArtifacts:
                 - Name: SourceArtifact
-                - Name: TemplateSource
               Configuration:
                 ActionMode: CREATE_UPDATE
                 StackName: Patching
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: !Sub SourceArtifact::${TemplateName}
-                TemplateConfiguration: !Sub TemplateSource::${ParametersName}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
                 RoleArn: arn:aws:iam::007695491693:role/AWS-SystemsManager-AutomationExecutionRole
               RunOrder: 1
       ExecutionMode: QUEUED
