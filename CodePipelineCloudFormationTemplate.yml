@@ -116,11 +116,11 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: !Sub SourceArtifact::MainCloudFormationTemplate.yml
                 RoleArn: arn:aws:iam::007695491693:role/AWS-SystemsManager-AutomationExecutionRole
-                ParameterOverrides: !Sub |
-                  {
-                    "ArtifactName": "SourceArtifact",
-                    "FileName":  'Parameters.json'
-                  }
+                # ParameterOverrides: !Sub |
+                #   {
+                #     "ArtifactName": "SourceArtifact",
+                #     "FileName":  'Parameters.json'
+                #   }
               RunOrder: 1
       ExecutionMode: QUEUED
 
