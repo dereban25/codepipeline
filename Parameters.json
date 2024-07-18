@@ -1,0 +1,7 @@
+{
+    "Parameters": {
+        "SNSTopicName": "SNSForPatch",
+        "SNSDisplayName": "SNSForPatch",
+        "SNSEmail": "maxdcloudops@gmail.com"
+    }
+}
