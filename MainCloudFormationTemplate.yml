@@ -12,15 +12,6 @@ Parameters:
     Description: Email address for SNS subscription
     Type: String
 
-  FileName:
-    Description: 'The name of the parameter file (required by CodePipeline)'
-    Type: String
-    Default: 'Parameters.json'
-  ArtifactName:
-    Description: 'The name of the source artifact (required by CodePipeline)'
-    Type: String
-    Default: 'SourceArtifact'
-
 Resources:
   SNSTopic:
     Type: AWS::SNS::Topic
