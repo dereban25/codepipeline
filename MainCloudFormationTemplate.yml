@@ -3,15 +3,15 @@ Parameters:
   SNSTopicName:
     Description: Name for the SNS topic
     Type: String
-    Default: SNSForPatch
+
   SNSDisplayName:
     Description: Display name for the SNS topic
     Type: String
-    Default: SNSForPatch
+
   SNSEmail:
     Description: Email address for SNS subscription
     Type: String
-    Default: 'maxdcloudops@gmail.com'
+
   FileName:
     Description: 'The name of the parameter file (required by CodePipeline)'
     Type: String
