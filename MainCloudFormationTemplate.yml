@@ -21,4 +21,4 @@ Resources:
 Outputs:
   MyStack:
     Description: "The output from the nested stack"
-    Value: !GetAtt MyStack.Outputs
+    Value: MyStack
