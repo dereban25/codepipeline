@@ -123,4 +123,4 @@ Resources:
 Outputs:
   CodePipelineName:
     Description: "The name of the CodePipeline"
-    Value: SourceArtifact
+    Value: !Ref CodePipeline
