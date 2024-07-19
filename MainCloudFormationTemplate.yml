@@ -3,28 +3,17 @@ Parameters:
   SNSTopicName:
     Description: Name for the SNS topic
     Type: String
+
   SNSDisplayName:
     Description: Display name for the SNS topic
     Type: String
+
   SNSEmail:
     Description: Email address for SNS subscription
     Type: String
 
 Resources:
-  MyNestedStack:
+  MyStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: 
-        Fn::Sub: 
-          - "https://s3.amazonaws.com/${BucketName}/${ObjectKeyPrefix}/SNSForPatchingCloudFormation.yml"
-          - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
-            ObjectKeyPrefix: !GetArtifactAtt [SourceArtifact, ObjectKey]
-      Parameters:
-        SNSTopicName: !Ref SNSTopicName
-        SNSDisplayName: !Ref SNSDisplayName
-        SNSEmail: !Ref SNSEmail
-
-Outputs:
-  NestedStackOutput:
-    Description: "The output from the nested stack"
-    Value: !GetAtt MyNestedStack.Outputs.SomeOutput
+      TemplatePath: SourceArtifact::SNSForPatchingCloudFormation.yml
