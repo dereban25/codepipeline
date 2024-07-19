@@ -16,4 +16,4 @@ Resources:
   MyStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: SourceArtifact::SNSForPatchingCloudFormation.yml
+      Template: SourceArtifact::SNSForPatchingCloudFormation.yml
