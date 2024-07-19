@@ -12,12 +12,7 @@ Parameters:
     Description: Email address for SNS subscription
     Type: String
 
-  SNSTemplatePath:
-    Type: String
-    Description: "The path to the SNS template within the artifact store"
-    Default: !Sub "SourceArtifact::SNSForPatchingCloudFormation.yml"
-
   MyStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${ArtifactBucketName}/${SNSObjectKey}"
+      TemplateURL: !Sub "SourceArtifact::SNSForPatchingCloudFormation.yml"
