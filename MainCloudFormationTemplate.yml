@@ -16,7 +16,7 @@ Resources:
   MyStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: s3://codepipeline-007695491693-us-east-1/Patching/SourceArti/xsqAnrE/SNSForPatchingCloudFormation.yml
+      TemplateURL: https://s3.amazonaws.com/codepipeline-007695491693-us-east-1/Patching/SourceArti/xsqAnrE/SNSForPatchingCloudFormation.yml
 
 Outputs:
   MyStack:
