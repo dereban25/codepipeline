@@ -22,18 +22,3 @@ Resources:
       Endpoint: !Ref SNSEmail
       Protocol: email
       TopicArn: !Ref SNSTopic
-
-
-# Resources:
-#   MyStack:
-#     Type: AWS::CloudFormation::Stack
-#     Properties:
-#       TemplateURL: 
-#       Fn::Sub:
-#           - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
-#           - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
-#             ObjectKey: !GetArtifactAtt [SourceArtifact, ObjectKey]
-#       Parameters:
-#         SNSTopicName: !Ref SNSTopicName
-#         SNSDisplayName: !Ref SNSDisplayName
-#         SNSEmail: !Ref SNSEmail
