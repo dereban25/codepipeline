@@ -1,29 +1,30 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Parameters:
-  SNSTopicName:
-    Description: Name for the SNS topic
-    Type: String
-  SNSDisplayName:
-    Description: Display name for the SNS topic
-    Type: String
-  SNSEmail:
-    Description: Email address for SNS subscription
-    Type: String
+# Parameters:
+#   SNSTopicName:
+#     Description: Name for the SNS topic
+#     Type: String
+#   SNSDisplayName:
+#     Description: Display name for the SNS topic
+#     Type: String
+#   SNSEmail:
+#     Description: Email address for SNS subscription
+#     Type: String
 
-Resources:
-  MyStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: Fn::Sub:
-          - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
-          - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
-            ObjectKey: !GetArtifactAtt [SourceArtifact, ObjectKey]
-      Parameters:
-        SNSTopicName: !Ref SNSTopicName
-        SNSDisplayName: !Ref SNSDisplayName
-        SNSEmail: !Ref SNSEmail
+# Resources:
+#   MyStack:
+#     Type: AWS::CloudFormation::Stack
+#     Properties:
+#       TemplateURL: 
+#       Fn::Sub:
+#           - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
+#           - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
+#             ObjectKey: !GetArtifactAtt [SourceArtifact, ObjectKey]
+#       Parameters:
+#         SNSTopicName: !Ref SNSTopicName
+#         SNSDisplayName: !Ref SNSDisplayName
+#         SNSEmail: !Ref SNSEmail
 
 Outputs:
   ConstructedTemplateURL:
     Description: "The constructed Template URL for debugging"
-    Value: !Sub "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
+    Value: !GetArtifactAtt [SourceArtifact, BucketName]
