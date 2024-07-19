@@ -17,8 +17,12 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: https://s3.amazonaws.com/codepipeline-007695491693-us-east-1/Patching/SourceArti/xsqAnrE/SNSForPatchingCloudFormation.yml
+        # !Sub 
+        #   - "https://s3.amazonaws.com/${BucketName}/${ObjectKeyPrefix}/SNSForPatchingCloudFormation.yml"
+        #   - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
+        #     ObjectKeyPrefix: !GetArtifactAtt [SourceArtifact, ObjectKey]
 
 Outputs:
   MyStack:
     Description: "The output from the nested stack"
-    Value: MyStack
+    Value: !GetArtifactAtt [SourceArtifact, ObjectKey]
