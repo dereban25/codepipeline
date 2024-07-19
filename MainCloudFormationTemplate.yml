@@ -14,7 +14,7 @@ Resources:
   MyStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL:
+      TemplateURL: |
         Fn::Sub:
           - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
           - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
