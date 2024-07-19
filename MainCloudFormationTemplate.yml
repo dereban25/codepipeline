@@ -27,4 +27,4 @@ AWSTemplateFormatVersion: '2010-09-09'
 Outputs:
   ConstructedTemplateURL:
     Description: "The constructed Template URL for debugging"
-    Value: !GetArtifactAtt [SourceArtifact, BucketName]
+    Value: !GetAtt SourceArtifact
