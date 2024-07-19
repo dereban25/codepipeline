@@ -27,4 +27,8 @@ Resources:
 Outputs:
   ConstructedTemplateURL:
     Description: "The constructed Template URL for debugging"
-    Value: !Sub "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
+    Value: |
+      Fn::Sub:
+      - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
+      - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
+        ObjectKey: !GetArtifactAtt [SourceArtifact, ObjectKey]
