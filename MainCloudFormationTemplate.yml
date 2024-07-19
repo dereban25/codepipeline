@@ -39,4 +39,4 @@ Resources:
 Outputs:
   Art:
     Description: "The constructed Template URL for debugging"
-    Value: SourceArtifact
+    Value: !GetArtifactAtt [SourceArtifact, BucketName]
