@@ -3,11 +3,9 @@ Parameters:
   SNSTopicName:
     Description: Name for the SNS topic
     Type: String
-
   SNSDisplayName:
     Description: Display name for the SNS topic
     Type: String
-
   SNSEmail:
     Description: Email address for SNS subscription
     Type: String
@@ -18,9 +16,9 @@ Resources:
     Properties:
       TemplateURL: 
         Fn::Sub: 
-          - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
+          - "https://s3.amazonaws.com/${BucketName}/${ObjectKeyPrefix}/SNSForPatchingCloudFormation.yml"
           - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
-            ObjectKey: !Sub "${ObjectKeyPrefix}/SNSForPatchingCloudFormation.yml"
+            ObjectKeyPrefix: !GetArtifactAtt [SourceArtifact, ObjectKey]
       Parameters:
         SNSTopicName: !Ref SNSTopicName
         SNSDisplayName: !Ref SNSDisplayName
