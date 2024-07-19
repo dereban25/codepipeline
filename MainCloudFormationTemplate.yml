@@ -29,9 +29,9 @@ Outputs:
     Value: 
       Fn::Sub:
         - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
-        - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
-          ObjectKey: !GetArtifactAtt [SourceArtifact, ObjectKey]
-          
+        - BucketName: { "Fn::GetArtifactAtt" : [ "SourceArtifact", "BucketName" ] }
+          ObjectKey: { "Fn::GetArtifactAtt" : [ "SourceArtifact", "ObjectKey" ] }
+
 # Resources:
 #   MyStack:
 #     Type: AWS::CloudFormation::Stack
