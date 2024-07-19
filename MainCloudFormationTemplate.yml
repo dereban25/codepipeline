@@ -1,14 +1,14 @@
 AWSTemplateFormatVersion: '2010-09-09'
-# Parameters:
-#   SNSTopicName:
-#     Description: Name for the SNS topic
-#     Type: String
-#   SNSDisplayName:
-#     Description: Display name for the SNS topic
-#     Type: String
-#   SNSEmail:
-#     Description: Email address for SNS subscription
-#     Type: String
+Parameters:
+  SNSTopicName:
+    Description: Name for the SNS topic
+    Type: String
+  SNSDisplayName:
+    Description: Display name for the SNS topic
+    Type: String
+  SNSEmail:
+    Description: Email address for SNS subscription
+    Type: String
 
 # Resources:
 #   MyStack:
@@ -23,8 +23,20 @@ AWSTemplateFormatVersion: '2010-09-09'
 #         SNSTopicName: !Ref SNSTopicName
 #         SNSDisplayName: !Ref SNSDisplayName
 #         SNSEmail: !Ref SNSEmail
+Resources: 
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Ref SNSTopicName
+      DisplayName: !Ref SNSDisplayName
+  SNSSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !Ref SNSEmail
+      Protocol: email
+      TopicArn: !Ref SNSTopic
 
 Outputs:
-  ConstructedTemplateURL:
+  Art:
     Description: "The constructed Template URL for debugging"
     Value: SourceArtifact
