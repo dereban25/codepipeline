@@ -15,7 +15,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL:
-        Fn::Sub: 
+        Fn::Sub:
           - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
           - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
             ObjectKey: !GetArtifactAtt [SourceArtifact, ObjectKey]
