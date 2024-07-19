@@ -14,8 +14,7 @@ Resources:
   MyStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: |
-        Fn::Sub:
+      TemplateURL: Fn::Sub:
           - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
           - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
             ObjectKey: !GetArtifactAtt [SourceArtifact, ObjectKey]
@@ -27,8 +26,4 @@ Resources:
 Outputs:
   ConstructedTemplateURL:
     Description: "The constructed Template URL for debugging"
-    Value: |
-      Fn::Sub:
-      - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
-      - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
-        ObjectKey: !GetArtifactAtt [SourceArtifact, ObjectKey]
+    Value: !Sub "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
