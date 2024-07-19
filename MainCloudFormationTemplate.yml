@@ -15,4 +15,4 @@ Parameters:
   MyStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "SourceArtifact::SNSForPatchingCloudFormation.yml"
+      TemplateURL: SourceArtifact::SNSForPatchingCloudFormation.yml
