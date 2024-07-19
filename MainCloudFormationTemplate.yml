@@ -13,7 +13,20 @@ Parameters:
     Type: String
 
 Resources:
-  MyStack:
+  MyNestedStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      Template: SourceArtifact::SNSForPatchingCloudFormation.yml
+      TemplateURL: 
+        Fn::Sub: 
+          - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
+          - BucketName: !GetArtifactAtt [SourceArtifact, BucketName]
+            ObjectKey: !Sub "${ObjectKeyPrefix}/SNSForPatchingCloudFormation.yml"
+      Parameters:
+        SNSTopicName: !Ref SNSTopicName
+        SNSDisplayName: !Ref SNSDisplayName
+        SNSEmail: !Ref SNSEmail
+
+Outputs:
+  NestedStackOutput:
+    Description: "The output from the nested stack"
+    Value: !GetAtt MyNestedStack.Outputs.SomeOutput
