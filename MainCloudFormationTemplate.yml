@@ -12,6 +12,7 @@ Parameters:
     Description: Email address for SNS subscription
     Type: String
 
+Resources:
   MyStack:
     Type: AWS::CloudFormation::Stack
     Properties:
