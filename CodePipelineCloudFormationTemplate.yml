@@ -116,6 +116,11 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: !Sub SourceArtifact::${TemplateName}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
+                ParameterOverrides:
+                  {
+                  BucketName: { "Fn::GetArtifactAtt" : [ "SourceArtifact", "BucketName" ] },
+                  ObjectKey: { "Fn::GetArtifactAtt" : [ "SourceArtifact", "ObjectKey" ] }
+                  }
                 RoleArn: arn:aws:iam::007695491693:role/AWS-SystemsManager-AutomationExecutionRole
               RunOrder: 1
       ExecutionMode: QUEUED
@@ -123,4 +128,4 @@ Resources:
 Outputs:
   CodePipelineName:
     Description: "The name of the CodePipeline"
-    Value: !Ref CodePipeline
+    Value: BucketName
