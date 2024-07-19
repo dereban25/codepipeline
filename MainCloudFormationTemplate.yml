@@ -23,14 +23,6 @@ Resources:
       Protocol: email
       TopicArn: !Ref SNSTopic
 
-Outputs:
-  Art:
-    Description: "The constructed Template URL for debugging"
-    Value: 
-      Fn::Sub:
-        - "https://s3.amazonaws.com/${BucketName}/${ObjectKey}"
-        - BucketName: { "Fn::GetArtifactAtt" : [ "SourceArtifact", "BucketName" ] }
-          ObjectKey: { "Fn::GetArtifactAtt" : [ "SourceArtifact", "ObjectKey" ] }
 
 # Resources:
 #   MyStack:
