@@ -107,7 +107,7 @@ Resources:
           - Effect: Allow
             Action:
               - iam:PassRole
-            Resource: "!GetAtt CodePipelineServiceDeployRole.Arn"
+            Resource: !GetAtt CodePipelineServiceDeployRole.Arn
 
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
