@@ -65,6 +65,7 @@ Resources:
               - sns:GetTopicAttributes
               - sns:DeleteTopic
               - sns:CreateTopic
+              - sns:Subscribe
             Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
 
 
