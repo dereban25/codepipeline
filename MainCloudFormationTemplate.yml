@@ -22,3 +22,9 @@ Resources:
       Endpoint: !Ref SNSEmail
       Protocol: email
       TopicArn: !Ref SNSTopic
+
+  # SNSStack:
+  #     Type: AWS::CloudFormation::Stack
+  #     Properties:
+  #       TemplateURL: !Join [ "/", [ !Ref CfnBucketUrl, eks.yaml ] ]
+  #       Parameters:
