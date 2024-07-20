@@ -138,7 +138,6 @@ Resources:
                 FullRepositoryId: !Ref GitHubFullRepositoryId
                 BranchName: !Ref GitHubBranchName
                 DetectChanges: false
-              ParameterOverrides: "{ \"BucketName\" : { \"Fn::GetArtifactAtt\" : [\"SourceArtifact\", \"BucketName\"]}, \"ObjectKey\" : { \"Fn::GetArtifactAtt\" : [\"SourceArtifact\", \"ObjectKey\"]} }"
               RunOrder: 1
               OutputArtifacts:
                 - Name: SourceArtifact
@@ -159,6 +158,11 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: !Sub SourceArtifact::${TemplateName}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
+                ParameterOverrides: | 
+                  { "BucketName" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                    "ObjectKey" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]},
+                    "URL" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "URL"]},
+                  }
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
       ExecutionMode: QUEUED
