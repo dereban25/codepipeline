@@ -43,8 +43,11 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: codepipeline.amazonaws.com
+              Service: 
+              - codepipeline.amazonaws.com
+              - cloudformation.amazonaws.com
             Action: sts:AssumeRole
+            
 
   CodePipelineServiceDeployRoleInlinePolicy:
     Type: AWS::IAM::Policy
@@ -104,7 +107,7 @@ Resources:
           - Effect: Allow
             Action:
               - iam:PassRole
-            Resource: "*"
+            Resource: "!GetAtt CodePipelineServiceDeployRole.Arn"
 
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
