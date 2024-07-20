@@ -26,6 +26,7 @@ Parameters:
     Default: 'Patching'
 
 Resources:
+  # S3 bucket for storing pipeline artifacts
   PipelineBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -34,6 +35,7 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
+  # IAM Role for the deployment stage of the CodePipeline
   CodePipelineServiceDeployRole:
     Type: AWS::IAM::Role
     Properties:
@@ -66,9 +68,10 @@ Resources:
               - sns:DeleteTopic
               - sns:CreateTopic
               - sns:Subscribe
+              - sns:Unsubscribe
             Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
 
-
+  # IAM Role for the source stage of the CodePipeline
   CodePipelineServiceSourceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -93,7 +96,9 @@ Resources:
           - Effect: Allow
             Action:
               - s3:PutObject
-            Resource: "*"
+              - s3:GetObject
+              - s3:ListBucket
+            Resource: !Sub 'arn:aws:s3:::codepipeline-${AWS::AccountId}-${AWS::Region}/*'
           - Effect: Allow
             Action:
               - codestar-connections:UseConnection
@@ -109,7 +114,8 @@ Resources:
             Action:
               - iam:PassRole
             Resource: !GetAtt CodePipelineServiceDeployRole.Arn
-
+  
+  # CodePipeline definition
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
