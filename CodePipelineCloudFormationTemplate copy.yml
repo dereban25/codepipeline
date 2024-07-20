@@ -30,10 +30,10 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
-  CodePipelineServiceSourceRole:
+  CodePipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: CodePipelineServiceSourceRole
+      RoleName: AWSCodePipelineServiceRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -42,22 +42,28 @@ Resources:
               Service: codepipeline.amazonaws.com
             Action: sts:AssumeRole
 
-  CodePipelineServiceSourceRoleInlinePolicy:
+  CodePipelineServiceRoleInlinePolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: CodePipelineServiceSourceRoleInlinePolicy
+      PolicyName: CodePipelineServiceRoleInlinePolicy
       Roles:
-        - Ref: CodePipelineServiceSourceRole
+        - Ref: CodePipelineServiceRole
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Action:
+              - s3:CreateBucket
+              - s3:DeleteBucket
               - s3:PutObject
             Resource: "*"
           - Effect: Allow
             Action:
               - codestar-connections:UseConnection
+              - codestar-connections:GetConnection
+              - codestar-connections:ListConnections
+              - codestar-connections:CreateConnection
+              - codestar-connections:DeleteConnection
             Resource: !Ref CodestarConnection
           - Effect: Allow
             Action:
@@ -65,42 +71,18 @@ Resources:
               - cloudformation:CreateStack
               - cloudformation:DeleteStack
               - cloudformation:UpdateStack
-            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/Patching/*'
-
-  CodePipelineServiceDeployRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: CodePipelineServiceDeployRole
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
+            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/CodePipelineCloudFormation/*'
           - Effect: Allow
-            Principal:
-              Service: codepipeline.amazonaws.com
-            Action: sts:AssumeRole
-
-  CodePipelineServiceDeployRoleInlinePolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: CodePipelineServiceDeployRoleInlinePolicy
-      Roles:
-        - Ref: CodePipelineServiceDeployRole
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Sid: 'SNS'
-            Effect: Allow
             Action:
-              - 'sns:Publish'
-              - 'sns:GetTopicAttributes'
-              - 'sns:DeleteTopic'
-            Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
+              - kms:GenerateDataKey
+              - kms:Decrypt
+            Resource: "*"
 
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       Name: Patching
-      RoleArn: !GetAtt CodePipelineServiceSourceRole.Arn
+      RoleArn: !GetAtt CodePipelineServiceRole.Arn
       ArtifactStore:
         Type: S3
         Location: !Ref PipelineBucket
@@ -139,7 +121,7 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: !Sub SourceArtifact::${TemplateName}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
-                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+                RoleArn: arn:aws:iam::007695491693:role/AWS-SystemsManager-AutomationExecutionRole
               RunOrder: 1
       ExecutionMode: QUEUED
 
