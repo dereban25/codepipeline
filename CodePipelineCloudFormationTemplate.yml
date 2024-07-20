@@ -62,6 +62,11 @@ Resources:
               - 'sns:GetTopicAttributes'
               - 'sns:DeleteTopic'
             Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
+          - Sid: 'IAM'
+            Effect: Allow
+            Action:
+              - iam:PassRole
+            Resource: !GetAtt CodePipelineServiceDeployRole.Arn
 
 
   CodePipelineServiceSourceRole:
