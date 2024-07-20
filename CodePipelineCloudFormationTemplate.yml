@@ -170,3 +170,15 @@ Outputs:
   ArtifactUrl:
     Description: "URL of the artifact from the Source stage"
     Value: !Sub SourceArtifact::${ParametersName}
+
+  SourceArtifactBucket:
+    Description: "The bucket where the source artifact is stored"
+    Value: !GetAtt SourceArtifact.BucketName
+
+  SourceArtifactObjectKey:
+    Description: "The key of the source artifact"
+    Value: !GetAtt SourceArtifact.ObjectKey
+
+  SourceArtifactURL:
+    Description: "The URL of the source artifact"
+    Value: !GetAtt SourceArtifact.ObjectURL
