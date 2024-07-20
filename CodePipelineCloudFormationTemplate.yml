@@ -158,12 +158,15 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: !Sub SourceArtifact::${TemplateName}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
-                ParameterOverrides: 
-                  ArtifactUrl: !Sub 'https://${PipelineBucket}.s3.amazonaws.com/${!GetArtifactAtt [SourceArtifact, S3ObjectKey]}'
+                # ParameterOverrides:
+                #   {
+                #     "BucketName" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                #     "ObjectKey" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]}
+                #   }
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
       ExecutionMode: QUEUED
 Outputs:
   ArtifactUrl:
     Description: "URL of the artifact from the Source stage"
-    Value: ArtifactUrl
+    Value: !Sub SourceArtifact::${ParametersName}
