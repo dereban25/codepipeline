@@ -159,7 +159,7 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateName}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
                 ParameterOverrides:
-                    "BucketName" : !GetAtt SourceArtifact
+                    "BucketName" : !GetAtt SourceArtifact.Key
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
       ExecutionMode: QUEUED
