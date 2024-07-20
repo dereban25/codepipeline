@@ -158,27 +158,18 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: !Sub SourceArtifact::${TemplateName}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
-                # ParameterOverrides:
-                #   {
-                #     "BucketName" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                #     "ObjectKey" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]}
-                #   }
+                ParameterOverrides:
+                  {
+                    "BucketName" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                    "ObjectKey" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]}
+                  }
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
       ExecutionMode: QUEUED
 Outputs:
-  ArtifactUrl:
+  BucketName:
     Description: "URL of the artifact from the Source stage"
-    Value: !Sub SourceArtifact::${ParametersName}
-
-  SourceArtifactBucket:
-    Description: "The bucket where the source artifact is stored"
-    Value: !GetAtt SourceArtifact.BucketName
-
-  SourceArtifactObjectKey:
-    Description: "The key of the source artifact"
-    Value: !GetAtt SourceArtifact.ObjectKey
-
-  SourceArtifactURL:
-    Description: "The URL of the source artifact"
-    Value: !GetAtt SourceArtifact.ObjectURL
+    Value: BucketName
+  ObjectKey:
+    Description: "URL of the artifact from the Source stage"
+    Value: ObjectKey
