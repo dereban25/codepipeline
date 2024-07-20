@@ -61,9 +61,10 @@ Resources:
           - Sid: 'SNS'
             Effect: Allow
             Action:
-              - 'sns:Publish'
-              - 'sns:GetTopicAttributes'
-              - 'sns:DeleteTopic'
+              - sns:Publish
+              - sns:GetTopicAttributes
+              - sns:DeleteTopic
+              - sns:CreateTopic
             Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
 
 
