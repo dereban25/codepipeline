@@ -159,11 +159,11 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateName}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
                 ParameterOverrides: 
-                  ArtifactUrl: !Sub 'https://${PipelineBucket}.s3.amazonaws.com/${!GetArtifactAtt SourceArtifact.S3ObjectKey}'
+                  ArtifactUrl: !Sub 'https://${PipelineBucket}.s3.amazonaws.com/${!GetArtifactAtt [SourceArtifact, S3ObjectKey]}'
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
       ExecutionMode: QUEUED
 Outputs:
   ArtifactUrl:
     Description: "URL of the artifact from the Source stage"
-    Value: !Sub 'https://${PipelineBucket}.s3.amazonaws.com/${!GetArtifactAtt SourceArtifact.S3ObjectKey}'
+    Value: ArtifactUrl
