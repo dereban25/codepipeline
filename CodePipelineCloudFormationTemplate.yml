@@ -160,7 +160,7 @@ Resources:
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
                 ParameterOverrides: |
                   {
-                    "ObjectKey" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]}
+                    "ObjectKey" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "SNSForPatchingCloudFormation.yml"]}
                   }
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
