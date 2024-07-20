@@ -34,6 +34,36 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
+  CodePipelineServiceDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CodePipelineServiceDeployRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+
+  CodePipelineServiceDeployRoleInlinePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CodePipelineServiceDeployRoleInlinePolicy
+      Roles:
+        - Ref: CodePipelineServiceDeployRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: 'SNS'
+            Effect: Allow
+            Action:
+              - 'sns:Publish'
+              - 'sns:GetTopicAttributes'
+              - 'sns:DeleteTopic'
+            Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
+
+
   CodePipelineServiceSourceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -71,35 +101,10 @@ Resources:
               - cloudformation:DeleteStack
               - cloudformation:UpdateStack
             Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}/*'
-
-  CodePipelineServiceDeployRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: CodePipelineServiceDeployRole
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
           - Effect: Allow
-            Principal:
-              Service: codepipeline.amazonaws.com
-            Action: sts:AssumeRole
-
-  CodePipelineServiceDeployRoleInlinePolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: CodePipelineServiceDeployRoleInlinePolicy
-      Roles:
-        - Ref: CodePipelineServiceDeployRole
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Sid: 'SNS'
-            Effect: Allow
             Action:
-              - 'sns:Publish'
-              - 'sns:GetTopicAttributes'
-              - 'sns:DeleteTopic'
-            Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
+              - iam:PassRole
+            Resource: !GetAtt CodePipelineServiceDeployRole.Arn
 
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
