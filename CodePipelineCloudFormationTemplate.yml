@@ -159,10 +159,7 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateName}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersName}
                 ParameterOverrides:
-                  {
-                    "BucketName" : { "Fn::GetParam" : ["SourceArtifact", "BucketName"]},
-                    "ObjectKey" : { "Fn::GetParam" : ["SourceArtifact", "ObjectKey"]}
-                  }
+                    "BucketName" : !Sub SourceArtifact::${Key}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
       ExecutionMode: QUEUED
@@ -170,6 +167,3 @@ Outputs:
   BucketName:
     Description: "URL of the artifact from the Source stage"
     Value: BucketName
-  ObjectKey:
-    Description: "URL of the artifact from the Source stage"
-    Value: ObjectKey
