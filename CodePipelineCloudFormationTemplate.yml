@@ -73,6 +73,13 @@ Resources:
             Action:
               - iam:PassRole
             Resource: '*'
+          - Sid: 'CloudFormation'
+            Effect: Allow
+            Action:
+              - 'cloudformation:CreateStack'
+              - 'cloudformation:DeleteStack'
+              - 'cloudformation:DescribeStacks'
+            Resource: '*'
 
   # IAM Role for the source stage of the CodePipeline
   CodePipelineServiceSourceRole:
