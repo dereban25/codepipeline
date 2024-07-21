@@ -9,12 +9,19 @@ Parameters:
   SNSEmail:
     Description: Email address for SNS subscription
     Type: String
+  ArtifactName:
+    Description: Name of the current CodePipeline artifact
+    Type: String
 
-Resources: 
+Resources:
+  ArtifactBucketName:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: '/CodePipeline/ArtifactStoreBucket'
+
   SNSStack:
       Type: AWS::CloudFormation::Stack
       Properties:
-        TemplateURL: !Sub '${SourceArtifact}/SNSForPatchingCloudFormation.yml'
+        TemplateURL: !Sub 'https://${ArtifactBucketName}.s3.amazonaws.com/Patching/SourceArti/${ArtifactName}/SNSForPatchingCloudFormation.yml'
         Parameters:
           SNSTopicName: !Ref SNSTopicName
           SNSDisplayName: !Ref SNSDisplayName
