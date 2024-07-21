@@ -1,23 +1,26 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
-  SNSTopicName:
-    Description: Name for the SNS topic
+  ArtifactKey:
+    Description: The unique key for this pipeline execution's artifacts
     Type: String
+  StackName:
+    Description: Name of the stack being created/updated
+    Type: String
+  SNSTopicName:
+      Description: Name for the SNS topic
+      Type: String
   SNSDisplayName:
     Description: Display name for the SNS topic
     Type: String
   SNSEmail:
     Description: Email address for SNS subscription
     Type: String
-  ArtifactKey:
-    Description: The unique key for this pipeline execution's artifacts
-    Type: String
 
 Resources: 
   SNSStack:
       Type: AWS::CloudFormation::Stack
       Properties:
-        TemplateURL: !Sub 'https://codepipeline-007695491693-us-east-1.s3.amazonaws.com/Patching/SourceArti/${ArtifactKey}/SNSForPatchingCloudFormation.yml'
+        TemplateURL: !Sub 'https://codepipeline-${AWS::AccountId}-${AWS::Region}.s3.amazonaws.com/${StackName}/SourceArti/${ArtifactKey}/SNSForPatchingCloudFormation.yml'
         Parameters:
           SNSTopicName: !Ref SNSTopicName
           SNSDisplayName: !Ref SNSDisplayName
