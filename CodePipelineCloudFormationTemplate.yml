@@ -76,10 +76,10 @@ Resources:
           - Sid: 'CloudFormation'
             Effect: Allow
             Action:
-              - 'cloudformation:CreateStack'
-              - 'cloudformation:DeleteStack'
-              - 'cloudformation:DescribeStacks'
-            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}/*'
+              - cloudformation:CreateStack
+              - cloudformation:DeleteStack
+              - cloudformation:DescribeStacks
+            Resource: '*'
           - Sid: 'S3Access'
             Effect: Allow
             Action:
