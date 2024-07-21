@@ -14,7 +14,7 @@ Resources:
   SNSStack:
       Type: AWS::CloudFormation::Stack
       Properties:
-        TemplateURL: !Sub '${ArtifactBucket}/SNSForPatchingCloudFormation.yml'
+        TemplateURL: !Sub '${SourceArtifact}/SNSForPatchingCloudFormation.yml'
         Parameters:
           SNSTopicName: !Ref SNSTopicName
           SNSDisplayName: !Ref SNSDisplayName
