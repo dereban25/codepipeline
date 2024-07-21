@@ -79,7 +79,15 @@ Resources:
               - 'cloudformation:CreateStack'
               - 'cloudformation:DeleteStack'
               - 'cloudformation:DescribeStacks'
-            Resource: '*'
+            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}/*'
+          - Sid: 'S3Access'
+            Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:ListBucket
+            Resource:
+              - !Sub 'arn:aws:s3:::codepipeline-${AWS::AccountId}-${AWS::Region}/*'
 
   # IAM Role for the source stage of the CodePipeline
   CodePipelineServiceSourceRole:
