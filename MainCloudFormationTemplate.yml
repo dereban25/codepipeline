@@ -11,20 +11,11 @@ Parameters:
     Type: String
 
 Resources: 
-  SNSTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      TopicName: !Ref SNSTopicName
-      DisplayName: !Ref SNSDisplayName
-  SNSSubscription:
-    Type: AWS::SNS::Subscription
-    Properties:
-      Endpoint: !Ref SNSEmail
-      Protocol: email
-      TopicArn: !Ref SNSTopic
-
-  # SNSStack:
-  #     Type: AWS::CloudFormation::Stack
-  #     Properties:
-  #       TemplateURL: !Join [ "/", [ !Ref CfnBucketUrl, eks.yaml ] ]
-  #       Parameters:
+  SNSStack:
+      Type: AWS::CloudFormation::Stack
+      Properties:
+        TemplateURL: SourceArtifact::SNSForPatchingCloudFormation.yml
+        Parameters:
+          SNSTopicName: !Ref SNSTopicName
+          SNSDisplayName: !Ref SNSDisplayName
+          SNSEmail: !Ref SNSEmail
