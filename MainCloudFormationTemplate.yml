@@ -20,7 +20,7 @@ Resources:
   SNSStack:
       Type: AWS::CloudFormation::Stack
       Properties:
-        TemplateURL: !Sub 'https://codepipeline-${AWS::AccountId}-${AWS::Region}.s3.amazonaws.com/${StackName}/SourceArti/${ArtifactKey}/SNSForPatchingCloudFormation.yml'
+        TemplateURL: https://codepipeline-007695491693-us-east-1.s3.amazonaws.com/Patching/SourceArti/2pwLGmM/SNSForPatchingCloudFormation.yml
         Parameters:
           SNSTopicName: !Ref SNSTopicName
           SNSDisplayName: !Ref SNSDisplayName
