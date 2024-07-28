@@ -267,7 +267,7 @@ Resources:
               Configuration:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
-                Capabilities: CAPABILITY_NAMED_IAM
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: !Sub SourceArtifact::templates/${TemplateLambdaDeleteSnapshot}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
