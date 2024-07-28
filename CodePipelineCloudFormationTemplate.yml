@@ -161,7 +161,7 @@ Resources:
               OutputArtifacts:
                 - Name: SourceArtifact
 
-        - Name: Deploy
+        - Name: DeploySNS
           Actions:
             - Name: DeployAction
               ActionTypeId:
