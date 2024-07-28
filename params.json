@@ -1,0 +1,27 @@
+[
+    {
+      "ParameterKey": "CodestarConnection",
+      "ParameterValue": "arn:aws:codestar-connections:us-east-1:007695491693:connection/b965019a-d6b5-4bfa-ab0b-2596e6996504"
+    },
+    {
+      "ParameterKey": "GitHubFullRepositoryId",
+      "ParameterValue": "dereban25/codepipeline"
+    },
+    {
+      "ParameterKey": "GitHubBranchName",
+      "ParameterValue": "patching"
+    },
+    {
+      "ParameterKey": "TemplateSNS",
+      "ParameterValue": "SNS.yml"
+    },
+    {
+      "ParameterKey": "ParametersSNS",
+      "ParameterValue": "sns-parameters.json"
+    },
+    {
+      "ParameterKey": "StackName",
+      "ParameterValue": "Patching"
+    }
+  ]
+  
