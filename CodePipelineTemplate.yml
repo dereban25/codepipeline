@@ -105,6 +105,7 @@ Resources:
               - ssm:CreateDocument
               - ssm:DeleteDocument
               - ssm:GetDocument
+              - ssm:ListTagsForResource
             Resource: '*'
 
 
