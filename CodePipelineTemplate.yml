@@ -46,6 +46,84 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
+  # IAM Role for the deployment stage of the CodePipeline
+  CodePipelineServiceDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CodePipelineServiceDeployRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+              - cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+            
+
+  CodePipelineServiceDeployRoleInlinePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CodePipelineServiceDeployRoleInlinePolicy
+      Roles:
+        - Ref: CodePipelineServiceDeployRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: 'SNS'
+            Effect: Allow
+            Action:
+              - sns:Publish
+              - sns:GetTopicAttributes
+              - sns:DeleteTopic
+              - sns:CreateTopic
+              - sns:Subscribe
+              - sns:Unsubscribe
+            Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
+          - Effect: Allow
+            Action:
+              - iam:PassRole
+            Resource: '*'
+          - Sid: 'CloudFormation'
+            Effect: Allow
+            Action:
+              - cloudformation:CreateStack
+              - cloudformation:DeleteStack
+              - cloudformation:DescribeStacks
+            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}*'
+          - Sid: 'S3Access'
+            Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:ListBucket
+            Resource:
+              - !Sub 'arn:aws:s3:::codepipeline-${AWS::AccountId}-${AWS::Region}/*'
+
+
+          - Sid: 'SSM'
+            Effect: Allow
+            Action:
+              - ssm:CreateDocument
+              - ssm:SendCommand
+              - ssm:DescribeInstanceInformation
+              - ssm:ListCommands
+              - ssm:ListCommandInvocations
+              - ssm:StartAutomationExecution
+              - ssm:DescribeAutomationExecutions
+              - ssm:GetAutomationExecution
+              - ssm:DescribeAutomationStepExecutions
+            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}*'
+
+
+
+
+
+
+
+
+
+
 
   # IAM Role for the source stage of the CodePipeline
   CodePipelineServiceSourceRole:
@@ -89,7 +167,7 @@ Resources:
           - Effect: Allow
             Action:
               - iam:PassRole
-            Resource: !Sub 'arn:aws:iam::${AWS::AccountId}:role/CodePipelineServiceDeployRole'
+            Resource: !GetAtt CodePipelineServiceDeployRole.Arn
   
   # CodePipeline definition
   CodePipeline:
