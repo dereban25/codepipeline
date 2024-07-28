@@ -109,7 +109,7 @@ Resources:
               - ssm:GetDocument
               - ssm:ListTagsForResource
             Resource: 
-              - !Sub  'arn:aws:sts::${AWS::AccountId}:assumed-role/CodePipelineServiceDeployRole/AWSCloudFormation'
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:document/PatchInstanceWithRollbackKeepSnapshot1'
 
 
 
