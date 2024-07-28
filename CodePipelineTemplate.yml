@@ -175,8 +175,8 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: !Sub SourceArtifact::templates/${TemplateSNSForPatching}
-                TemplateConfiguration: !Sub SourceArtifact::templates/${ParametersSNSForPatching}
+                TemplatePath: !Sub SourceArtifact::${TemplateSNSForPatching}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersSNSForPatching}
                 # ParameterOverrides: !Sub | 
                 #   {
                 #     "ArtifactKey": "#{codepipeline.PipelineExecutionId}",
