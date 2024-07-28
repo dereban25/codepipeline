@@ -12,11 +12,11 @@ Parameters:
     Type: String
     Description: (Required) Specify the branch name
     Default: 'patching'
-  TemplateSNSForPatching: 
+  TemplateSNS: 
     Type: String
     Description: '(Optional) Specify the CloudFormation template name, for example: MainCloudFormationTemplate.yml'
     Default: 'SNS.yml'
-  ParametersSNSForPatching: 
+  ParametersSNS: 
     Type: String
     Description: '(Optional) Specify the parameters json file name, for example: Parameters.json'
     Default: 'sns-parameters.json'
@@ -176,8 +176,8 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: !Sub SourceArtifact::${TemplateSNSForPatching}
-                TemplateConfiguration: !Sub SourceArtifact::${ParametersSNSForPatching}
+                TemplatePath: !Sub SourceArtifact::templates/${TemplateSNS}
+                TemplateConfiguration: !Sub SourceArtifact::parameters/${ParametersSNS}
                 # ParameterOverrides: !Sub | 
                 #   {
                 #     "ArtifactKey": "#{codepipeline.PipelineExecutionId}",
