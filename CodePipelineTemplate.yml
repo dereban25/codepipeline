@@ -144,7 +144,7 @@ Resources:
         Location: !Ref PipelineBucket
       PipelineType: V2
       Stages:
-        - Name: Download code from Github
+        - Name: DownloadCodeFromGithub
           Actions:
             - Name: SourceAction
               ActionTypeId:
@@ -161,7 +161,7 @@ Resources:
               OutputArtifacts:
                 - Name: SourceArtifact
 
-        - Name: Deploy SNS
+        - Name: DeploySNS
           Actions:
             - Name: DeployAction
               ActionTypeId:
@@ -175,8 +175,8 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: !Sub SourceArtifact::${TemplateSNSForPatching}
-                TemplateConfiguration: !Sub SourceArtifact::${ParametersSNSForPatching}
+                TemplatePath: !Sub SourceArtifact::/templates/${TemplateSNSForPatching}
+                TemplateConfiguration: !Sub SourceArtifact::/templates/${ParametersSNSForPatching}
                 # ParameterOverrides: !Sub | 
                 #   {
                 #     "ArtifactKey": "#{codepipeline.PipelineExecutionId}",
