@@ -79,7 +79,8 @@ Resources:
               - sns:CreateTopic
               - sns:Subscribe
               - sns:Unsubscribe
-            Resource: !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
+            Resource: 
+              - !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
           - Effect: Allow
             Action:
               - iam:PassRole
@@ -90,7 +91,8 @@ Resources:
               - cloudformation:CreateStack
               - cloudformation:DeleteStack
               - cloudformation:DescribeStacks
-            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}*'
+            Resource: 
+              - !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}*'
           - Sid: 'S3Access'
             Effect: Allow
             Action:
@@ -106,7 +108,8 @@ Resources:
               - ssm:DeleteDocument
               - ssm:GetDocument
               - ssm:ListTagsForResource
-            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}*'
+            Resource: 
+              - !Sub  'arn:aws:sts::${AWS::AccountId}:assumed-role/CodePipelineServiceDeployRole/AWSCloudFormation'
 
 
 
