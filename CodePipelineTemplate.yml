@@ -100,6 +100,30 @@ Resources:
             Resource:
               - !Sub 'arn:aws:s3:::codepipeline-${AWS::AccountId}-${AWS::Region}/*'
 
+
+          - Sid: 'SSM'
+            Effect: Allow
+            Action:
+              - 'ssm:SendCommand'
+              - 'ssm:DescribeInstanceInformation'
+              - 'ssm:ListCommands'
+              - 'ssm:ListCommandInvocations'
+              - 'ssm:StartAutomationExecution'
+              - 'ssm:DescribeAutomationExecutions'
+              - 'ssm:GetAutomationExecution'
+              - 'ssm:DescribeAutomationStepExecutions'
+            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}*'
+
+
+
+
+
+
+
+
+
+
+
   # IAM Role for the source stage of the CodePipeline
   CodePipelineServiceSourceRole:
     Type: AWS::IAM::Role
