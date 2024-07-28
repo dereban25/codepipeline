@@ -143,6 +143,7 @@ Resources:
         Type: S3
         Location: !Ref PipelineBucket
       PipelineType: V2
+      RestartExecutionOnUpdate: true
       Stages:
         - Name: DownloadCodeFromGithub
           Actions:
