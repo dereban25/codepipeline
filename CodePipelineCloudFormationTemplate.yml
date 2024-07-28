@@ -144,7 +144,7 @@ Resources:
         Location: !Ref PipelineBucket
       PipelineType: V2
       Stages:
-        - Name: Source
+        - Name: Download code from Github
           Actions:
             - Name: SourceAction
               ActionTypeId:
@@ -161,7 +161,7 @@ Resources:
               OutputArtifacts:
                 - Name: SourceArtifact
 
-        - Name: DeploySNS
+        - Name: Deploy SNS
           Actions:
             - Name: DeployAction
               ActionTypeId:
