@@ -106,7 +106,7 @@ Resources:
               - ssm:DeleteDocument
               - ssm:GetDocument
               - ssm:ListTagsForResource
-            Resource: '*'
+            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}*'
 
 
 
