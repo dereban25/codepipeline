@@ -116,7 +116,17 @@ Resources:
               - ssm:ListTagsForResource
             Resource: 
               - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:document/PatchInstanceWithRollbackKeepSnapshot1'
-
+          - Sid: 'Lambda'
+            Effect: Allow
+            Action:
+              - 'lambda:DeleteFunction'
+              - 'lambda:GetFunction'
+              - 'lambda:GetRuntimeManagementConfig'
+              - 'lambda:CreateFunction'
+              - 'lambda:InvokeFunction'
+              - 'lambda:GetFunctionCodeSigningConfig'
+            Resource:
+              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/LambdaFunctionName'
 
 
 
