@@ -100,7 +100,7 @@ Resources:
               - cloudformation:CreateChangeSet
             Resource: 
               - !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}*'
-              - !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stackset/${StackName}*'
+              - !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:transform/Serverless*'
           - Sid: 'S3Access'
             Effect: Allow
             Action:
