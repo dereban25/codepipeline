@@ -1,0 +1,19 @@
+{
+    "Parameters": {
+      "S3Bucket": "patchingdereban",
+      "S3Key": "DeleteSnapshot.zip",
+      "Days": "2",
+      "ExceptionAccountIds": "905418384534",
+      "ExceptMasterAccount": "False",
+      "RegionsToProcess": "us-east-1",
+      "RoleName": "AWS-SystemsManager-AutomationExecutionRole",
+      "TagKey": "Patching",
+      "TagValue": "DeleteAllow",
+      "LambdaRoleName": "arn:aws:iam::007695491693:role/Lambda-DeleteSnapshot",
+      "LambdaFunctionName": "LambdaDeleteSnapshot"
+    }
+  }
+  
+
+
+  "SnsTopicArn": "arn:aws:sns:us-east-1:007695491693:Max",
