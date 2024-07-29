@@ -275,7 +275,7 @@ Resources:
                 ParameterOverrides: !Sub | 
                   {
                     "S3Bucket": "${PipelineBucket}",
-                    "S3Key": "SourceArtifact::templates/DeleteSnapshot.zip"
+                    "S3Key": "templates/DeleteSnapshot.zip"
                   }
               RunOrder: 1
       ExecutionMode: QUEUED
