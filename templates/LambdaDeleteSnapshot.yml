@@ -6,6 +6,7 @@ Parameters:
 
   S3Bucket:
     Type: String
+    Default: codepipeline-007695491693-us-east-1
     Description: The S3 bucket where the Lambda function ZIP file is stored
 
   S3Key:
