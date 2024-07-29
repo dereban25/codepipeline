@@ -70,7 +70,7 @@ Resources:
       FunctionName: !Ref LambdaFunctionName
       CodeUri:
         Bucket: !Ref S3Bucket
-        Key: !Sub "templates/${S3Key}"
+        Key: !Ref S3Key
       Description: ''
       MemorySize: 128
       Timeout: 30
