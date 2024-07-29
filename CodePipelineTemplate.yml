@@ -188,6 +188,14 @@ Resources:
             Action:
               - iam:PassRole
             Resource: !GetAtt CodePipelineServiceDeployRole.Arn
+          - Effect: Allow
+            Action:
+              - codebuild:StartBuild
+              - codebuild:BatchGetBuilds
+              - codebuild:BatchGetProjects
+              - codebuild:ListBuildsForProject
+              - codebuild:ListProjects
+            Resource: '*'
   
   # CodePipeline definition
   CodePipeline:
