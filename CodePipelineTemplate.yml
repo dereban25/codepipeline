@@ -128,6 +128,7 @@ Resources:
               - lambda:InvokeFunction
               - lambda:GetFunctionCodeSigningConfig
               - lambda:TagResource
+              - lambda:PutRuntimeManagementConfig
             Resource:
               - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/LambdaDeleteSnapshot'
               - '*'
@@ -272,10 +273,11 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: !Sub SourceArtifact::templates/${TemplateLambdaDeleteSnapshot}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides: !Sub | 
+                ParameterOverrides: !Sub |
                   {
                     "S3Bucket": "${PipelineBucket}",
                     "S3Key": "templates/DeleteSnapshot.zip"
                   }
+
               RunOrder: 1
       ExecutionMode: QUEUED
