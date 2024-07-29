@@ -1,6 +1,5 @@
 {
     "Parameters": {
-      "S3Bucket": "patchingdereban",
       "S3Key": "DeleteSnapshot.zip",
       "Days": "2",
       "ExceptionAccountIds": "905418384534",

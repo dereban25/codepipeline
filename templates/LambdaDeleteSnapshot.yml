@@ -6,7 +6,6 @@ Parameters:
 
   S3Bucket:
     Type: String
-    Default: patchingdereban
     Description: The S3 bucket where the Lambda function ZIP file is stored
 
   S3Key:
