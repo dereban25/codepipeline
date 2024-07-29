@@ -29,5 +29,3 @@ Outputs:
   SnsTopicArn:
     Description: "ARN of the SNS topic"
     Value: !Ref SNSTopic
-    Export:
-      Name: !Sub "${AWS::StackName}-SnsTopicArn"
