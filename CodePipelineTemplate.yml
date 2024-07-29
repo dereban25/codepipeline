@@ -209,7 +209,7 @@ Resources:
                 ConnectionArn: !Ref CodestarConnection
                 FullRepositoryId: !Ref GitHubFullRepositoryId
                 BranchName: !Ref GitHubBranchName
-                DetectChanges: false
+                DetectChanges: true
               RunOrder: 1
               OutputArtifacts:
                 - Name: SourceArtifact
