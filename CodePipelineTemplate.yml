@@ -129,6 +129,7 @@ Resources:
               - lambda:GetFunctionCodeSigningConfig
               - lambda:TagResource
               - lambda:PutRuntimeManagementConfig
+              - lambda:DeleteFunctionEventInvokeConfig
             Resource:
               - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/LambdaDeleteSnapshot'
               - '*'
@@ -216,6 +217,22 @@ Resources:
               RunOrder: 1
               OutputArtifacts:
                 - Name: SourceArtifact
+
+        - Name: BuildStage
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: Patching
+              InputArtifacts:
+                - Name: SourceArtifact
+              OutputArtifacts:
+                - Name: BuildArtifact
+              RunOrder: 1
 
         - Name: DeploySNS
           Actions:

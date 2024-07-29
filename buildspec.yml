@@ -1,0 +1,43 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - pip install --upgrade awscli cfn-lint
+
+  pre_build:
+    commands:
+      - echo Checking CloudFormation templates...
+      # Lint CloudFormation templates
+      - cfn-lint templates/*.yml
+
+  build:
+    commands:
+      - echo Finding the latest artifact in S3...
+      # Find the latest artifact based on the last modified date
+      - |
+        LATEST_ARTIFACT=$(aws s3api list-objects --bucket your-artifact-bucket --query "Contents | sort_by(@, &LastModified) | [-1].Key" --output text)
+        echo "Latest artifact: $LATEST_ARTIFACT"
+        
+      - echo Downloading the latest artifact from S3...
+      # Download the latest artifact
+      - aws s3 cp s3://your-artifact-bucket/$LATEST_ARTIFACT .
+      
+      - echo Extracting artifact...
+      # Unzip the downloaded artifact
+      - unzip $LATEST_ARTIFACT -d extracted-artifacts
+      
+      - echo Copying DeleteSnapshot.zip to the target bucket...
+      # Copy DeleteSnapshot.zip to the target S3 bucket
+      - aws s3 cp extracted-artifacts/DeleteSnapshot.zip s3://your-target-bucket/DeleteSnapshot.zip
+
+  post_build:
+    commands:
+      - echo Cleaning up temporary files...
+      # Remove the extracted files and downloaded zip
+      - rm -rf extracted-artifacts $LATEST_ARTIFACT
+
+artifacts:
+  files:
+    - '**/*'
