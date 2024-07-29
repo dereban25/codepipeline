@@ -275,7 +275,7 @@ Resources:
                 ParameterOverrides: !Sub | 
                   {
                     "S3Bucket": "${PipelineBucket}",
-                    "SnsTopicArn": "${SNSOutput}"
+                    "SnsTopicArn": "${SNSOutput.Output}"
                   }
               RunOrder: 1
       ExecutionMode: QUEUED
