@@ -274,8 +274,7 @@ Resources:
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
                 ParameterOverrides: !Sub | 
                   {
-                    "S3Bucket": "${PipelineBucket}",
-                    "SnsTopicArn": "${SNSOutput.Output}"
+                    "S3Bucket": "${PipelineBucket}"
                   }
               RunOrder: 1
       ExecutionMode: QUEUED
