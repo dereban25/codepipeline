@@ -276,7 +276,7 @@ Resources:
                 ParameterOverrides: !Sub |
                   {
                     "S3Bucket": "${PipelineBucket}",
-                    "S3Key": "templates/DeleteSnapshot.zip"
+                    "S3Key": !Sub SourceArtifact::templates/DeleteSnapshot.zip
                   }
 
               RunOrder: 1
