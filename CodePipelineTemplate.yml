@@ -220,9 +220,9 @@ Resources:
           Image: aws/codebuild/standard:5.0
           Type: LINUX_CONTAINER
           EnvironmentVariables:
-          - Name: PIPELINE_BUCKET
-            Type: PLAINTEXT
-            Value: !Ref PipelineBucket
+            - Name: PIPELINE_BUCKET
+              Type: PLAINTEXT
+              Value: !Ref PipelineBucket
         ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
         TimeoutInMinutes: 5
         Description: "CodeBuild project for the Patching pipeline"
