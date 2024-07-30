@@ -14,7 +14,7 @@ phases:
 
   build:
     commands:
-      - echo Finding the latest artifact in S3...
+      - echo Finding the latest artifact in S3 $$PIPELINE_BUCKET
       # Find the latest artifact based on the last modified date
       - |
         LATEST_ARTIFACT=$(aws s3api list-objects --bucket $PIPELINE_BUCKET --query "Contents | sort_by(@, &LastModified) | [-1].Key" --output text)
