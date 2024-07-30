@@ -1,0 +1,4 @@
+template-file-path: ./cfn-template.yml
+tags:
+    Name: 'gitsync'
+    Project: 'Patching'
