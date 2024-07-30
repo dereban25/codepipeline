@@ -312,28 +312,28 @@ Resources:
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
 
-        - Name: DeployLambdaDeleteSnapshot
-          Actions:
-            - Name: DeployAction
-              ActionTypeId:
-                Category: Deploy
-                Owner: AWS
-                Provider: CloudFormation
-                Version: '1'
-              InputArtifacts:
-                - Name: SourceArtifact
-                - Name: SNSOutput
-              Configuration:
-                ActionMode: CREATE_UPDATE
-                StackName: !Ref StackName
-                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-                TemplatePath: !Sub SourceArtifact::templates/${TemplateLambdaDeleteSnapshot}
-                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides: !Sub |
-                  {
-                    "S3Bucket": "${PipelineBucket}",
-                    "S3Key": !Sub SourceArtifact::templates/DeleteSnapshot.zip
-                  }
+        # - Name: DeployLambdaDeleteSnapshot
+        #   Actions:
+        #     - Name: DeployAction
+        #       ActionTypeId:
+        #         Category: Deploy
+        #         Owner: AWS
+        #         Provider: CloudFormation
+        #         Version: '1'
+        #       InputArtifacts:
+        #         - Name: SourceArtifact
+        #         - Name: SNSOutput
+        #       Configuration:
+        #         ActionMode: CREATE_UPDATE
+        #         StackName: !Ref StackName
+        #         Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+        #         TemplatePath: !Sub SourceArtifact::templates/${TemplateLambdaDeleteSnapshot}
+        #         RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+        #         ParameterOverrides: !Sub |
+        #           {
+        #             "S3Bucket": "${PipelineBucket}",
+        #             "S3Key": !Sub SourceArtifact::templates/DeleteSnapshot.zip
+        #           }
 
-              RunOrder: 1
+        #       RunOrder: 1
       ExecutionMode: QUEUED
