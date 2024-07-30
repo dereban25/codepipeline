@@ -17,12 +17,12 @@ phases:
       - echo Finding the latest artifact in S3 $PIPELINE_BUCKET
       # Find the latest artifact based on the last modified date
       - |
-        LATEST_ARTIFACT=$(aws s3api list-objects --bucket codepipeline-007695491693-us-east-1 --query "Contents | sort_by(@, &LastModified) | [-1].Key" --output text)
+        LATEST_ARTIFACT=$(aws s3api list-objects --bucket $PIPELINE_BUCKET --query "Contents | sort_by(@, &LastModified) | [-1].Key" --output text)
         echo "Latest artifact: $LATEST_ARTIFACT"
         
       - echo Downloading the latest artifact from S3...
       # Download the latest artifact
-      - aws s3 cp s3://codepipeline-007695491693-us-east-1/$LATEST_ARTIFACT .
+      - aws s3 cp s3://$PIPELINE_BUCKET/$LATEST_ARTIFACT .
       
       - echo Extracting artifact...
       # Unzip the downloaded artifact
@@ -30,7 +30,7 @@ phases:
       
       - echo Copying DeleteSnapshot.zip to the target bucket...
       # Copy DeleteSnapshot.zip to the target S3 bucket
-      - aws s3 cp extracted-artifacts/DeleteSnapshot.zip s3://codepipeline-007695491693-us-east-1/DeleteSnapshot.zip
+      - aws s3 cp extracted-artifacts/DeleteSnapshot.zip s3://$PIPELINE_BUCKET/DeleteSnapshot.zip
 
   post_build:
     commands:
