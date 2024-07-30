@@ -221,6 +221,7 @@ Resources:
           Type: LINUX_CONTAINER
           EnvironmentVariables:
           - Name: PIPELINE_BUCKET
+            Type: PLAINTEXT
             Value: !Ref PipelineBucket
         ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
         TimeoutInMinutes: 5
