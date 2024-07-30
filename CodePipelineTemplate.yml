@@ -174,6 +174,7 @@ Resources:
               - s3:ListBucket
             Resource: 
               - !Sub 'arn:aws:s3:::codepipeline-${AWS::AccountId}-${AWS::Region}/*'
+              - '*'
           - Effect: Allow
             Action:
               - codestar-connections:UseConnection
