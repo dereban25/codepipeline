@@ -17,12 +17,12 @@ phases:
       - echo Finding the latest artifact in S3...
       # Find the latest artifact based on the last modified date
       - |
-        LATEST_ARTIFACT=$(aws s3api list-objects --bucket your-artifact-bucket --query "Contents | sort_by(@, &LastModified) | [-1].Key" --output text)
+        LATEST_ARTIFACT=$(aws s3api list-objects --bucket $PIPELINE_BUCKET --query "Contents | sort_by(@, &LastModified) | [-1].Key" --output text)
         echo "Latest artifact: $LATEST_ARTIFACT"
         
       - echo Downloading the latest artifact from S3...
       # Download the latest artifact
-      - aws s3 cp s3://your-artifact-bucket/$LATEST_ARTIFACT .
+      - aws s3 cp s3://$$PIPELINE_BUCKET/$LATEST_ARTIFACT .
       
       - echo Extracting artifact...
       # Unzip the downloaded artifact
