@@ -22,7 +22,7 @@ phases:
         
       - echo Downloading the latest artifact from S3...
       # Download the latest artifact
-      - aws s3 cp s3://$$PIPELINE_BUCKET/$LATEST_ARTIFACT .
+      - aws s3 cp s3://$PIPELINE_BUCKET/$LATEST_ARTIFACT .
       
       - echo Extracting artifact...
       # Unzip the downloaded artifact
