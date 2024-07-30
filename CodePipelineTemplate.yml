@@ -211,7 +211,7 @@ Resources:
           Image: aws/codebuild/standard:5.0
           Type: LINUX_CONTAINER
         ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
-        TimeoutInMinutes: 60
+        TimeoutInMinutes: 5
         Description: "CodeBuild project for the Patching pipeline"
 
   # CodePipeline definition
