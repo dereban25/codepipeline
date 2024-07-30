@@ -27,14 +27,8 @@ phases:
       - echo Extracting artifact...
       - unzip $LATEST_ARTIFACT -d extracted-artifacts || echo "Unzip failed"
 
-      - echo Moving DeleteSnapshot.zip to root directory...
-      - mv extracted-artifacts/zip/DeleteSnapshot.zip .
-
-      - echo Listing contents of the current directory after moving...
-      - ls -l
-
       - echo Copying DeleteSnapshot.zip to the target S3 bucket...
-      - aws s3 cp DeleteSnapshot.zip s3://$PIPELINE_BUCKET/DeleteSnapshot.zip
+      - aws s3 cp extracted-artifacts/zip/DeleteSnapshot.zip s3://$PIPELINE_BUCKET/DeleteSnapshot.zip
 
   post_build:
     commands:
