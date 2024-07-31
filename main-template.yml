@@ -364,7 +364,9 @@ Resources:
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
                 ParameterOverrides: !Sub |
                   {
-                    "S3Bucket": "${PipelineBucket}"
+                    "S3Bucket": "${PipelineBucket}",
+                    "S3Key": "${TemplateLambdaDeleteSnapshot}",
+                    "SnsTopicArn": "${SNSOutput.SnsTopicArn}"
                   }
               RunOrder: 1
         - Name: DeployLambdaRunMultiAccountsPatching
