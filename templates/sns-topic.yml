@@ -3,11 +3,11 @@ Parameters:
   SNSTopicName:
     Description: Name for the SNS topic
     Type: String
-    Default: SNSForPatch
+
   SNSDisplayName:
     Description: Display name for the SNS topic
     Type: String
-    Default: SNSForPatch
+    
   SNSEmail:
     Description: Email address for SNS subscription
     Type: String

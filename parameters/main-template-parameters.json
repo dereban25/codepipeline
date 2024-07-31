@@ -1,0 +1,8 @@
+{
+    "Parameters": {
+      "StackName": "PatchingMultiAccountsWithOnPrem",
+      "CodestarConnection": "arn:aws:codestar-connections:us-east-1:007695491693:connection/b965019a-d6b5-4bfa-ab0b-2596e6996504",
+      "GitHubFullRepositoryId": "dereban25/codepipeline",
+      "GitHubBranchName": "patching"
+    }
+  }

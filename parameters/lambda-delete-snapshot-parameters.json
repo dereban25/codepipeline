@@ -1,8 +1,8 @@
 {
     "Parameters": {
-      "S3Key": "DeleteSnapshot.zip",
+      "S3Key": "delete-snapshot.zip",
       "Days": "2",
-      "ExceptionAccountIds": "905418384534",
+      "ExceptionAccountIds": "",
       "ExceptMasterAccount": "False",
       "RegionsToProcess": "us-east-1",
       "RoleName": "AWS-SystemsManager-AutomationExecutionRole",

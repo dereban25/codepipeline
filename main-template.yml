@@ -1,5 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
+  StackName:
+    Type: String
+    Description: (Optional) Specify Stack Name
+    Default: 'PatchingMultiAccountsWithOnPrem'
+    
   # Source
   CodestarConnection:
     Type: String
@@ -14,33 +19,37 @@ Parameters:
     Description: (Required) Specify the branch name
     Default: 'patching'
 
-  StackName:
-    Type: String
-    Description: (Optional) Specify Stack Name
-    Default: 'Patching'
-
   # Templates
   TemplateSNS: 
     Type: String
-    Description: '(Required) SNS CloudFormation Template for Patching'
-    Default: 'SNS.yml'
+    Description: '(Required) CloudFormation template for creating SNS Topic'
+    Default: 'templates/sns-topic.yml'
 
   TemplateDocument: 
     Type: String
-    Description: '(Required) SNS CloudFormation Template for Patching'
-    Default: 'Document.yml'
+    Description: '(Required) CloudFormation template for creating SSM Document'
+    Default: 'templates/ssm-document.yml'
 
   TemplateLambdaDeleteSnapshot: 
     Type: String
-    Description: '(Required) SNS CloudFormation Template for Lambda function for Delete Snapshot after patching'
-    Default: 'LambdaDeleteSnapshot.yml'
+    Description: '(Required) CloudFormation template for the Lambda function to delete snapshots'
+    Default: 'templates/lambda-delete-snapshot.yml'
+
+  TemplateLambdaRunMultiAccountsPatching: 
+    Type: String
+    Description: '(Required) CloudFormation template for the Lambda function to run multi-accounts patching'
 
 
   # Parameters
   ParametersSNS: 
     Type: String
-    Description: '(Required) SNS parameters for Patching'
-    Default: 'sns-parameters.json'
+    Description: '(Required) JSON file with parameters for the SNS topic'
+    Default: 'parameters/sns-topic-parameters.json'
+
+  ParametersLambdaDeleteSnapshot: 
+    Type: String
+    Description: '(Required) JSON file with parameters for the Lambda function to delete snapshots'
+    Default: 'parameters/lambda-delete-snapshot-parameters.json'
 
 Resources:
   # S3 bucket for storing pipeline artifacts
@@ -336,6 +345,7 @@ Resources:
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
                 TemplatePath: !Sub SourceArtifact::templates/${TemplateLambdaDeleteSnapshot}
+                TemplateConfiguration: !Sub SourceArtifact::parameters/${ParametersLambdaDeleteSnapshot}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
                 ParameterOverrides: !Sub |
                   {
