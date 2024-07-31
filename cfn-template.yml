@@ -137,6 +137,7 @@ Resources:
             Effect: Allow
             Action:
               - events:DescribeRule
+              - events:PutRule
             Resource: '*'
 
 
