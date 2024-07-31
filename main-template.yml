@@ -43,12 +43,12 @@ Parameters:
   ParametersSNS: 
     Type: String
     Description: '(Required) JSON file with parameters for the SNS topic'
-    Default: 'parameters/sns-topic-parameters.json'
+    Default: 'sns-topic-parameters.json'
 
   ParametersLambdaDeleteSnapshot: 
     Type: String
     Description: '(Required) JSON file with parameters for the Lambda function to delete snapshots'
-    Default: 'parameters/lambda-delete-snapshot-parameters.json'
+    Default: 'lambda-delete-snapshot-parameters.json'
 
 Resources:
   # S3 bucket for storing pipeline artifacts
