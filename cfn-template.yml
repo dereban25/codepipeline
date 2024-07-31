@@ -211,27 +211,27 @@ Resources:
               - logs:PutLogEvents
             Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*'
 
-  # # CodeBuild definition
-  # PatchingCodeBuildProject:
-  #     Type: AWS::CodeBuild::Project
-  #     Properties:
-  #       Name: Patching
-  #       Source:
-  #         Type: CODEPIPELINE
-  #         BuildSpec: 'buildspec.yml'
-  #       Artifacts:
-  #         Type: CODEPIPELINE
-  #       Environment:
-  #         ComputeType: BUILD_GENERAL1_SMALL
-  #         Image: aws/codebuild/standard:5.0
-  #         Type: LINUX_CONTAINER
-  #         EnvironmentVariables:
-  #           - Name: PIPELINE_BUCKET
-  #             Type: PLAINTEXT
-  #             Value: !Ref PipelineBucket
-  #       ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
-  #       TimeoutInMinutes: 5
-  #       Description: "CodeBuild project for the Patching pipeline"
+  # CodeBuild definition
+  PatchingCodeBuildProject:
+      Type: AWS::CodeBuild::Project
+      Properties:
+        Name: Patching
+        Source:
+          Type: CODEPIPELINE
+          BuildSpec: 'buildspec.yml'
+        Artifacts:
+          Type: CODEPIPELINE
+        Environment:
+          ComputeType: BUILD_GENERAL1_SMALL
+          Image: aws/codebuild/standard:5.0
+          Type: LINUX_CONTAINER
+          EnvironmentVariables:
+            - Name: PIPELINE_BUCKET
+              Type: PLAINTEXT
+              Value: !Ref PipelineBucket
+        ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
+        TimeoutInMinutes: 5
+        Description: "CodeBuild project for the Patching pipeline"
 
   # CodePipeline definition
   CodePipeline:
@@ -262,60 +262,60 @@ Resources:
               OutputArtifacts:
                 - Name: SourceArtifact
 
-        # - Name: BuildStage
-        #   Actions:
-        #     - Name: BuildAction
-        #       ActionTypeId:
-        #         Category: Build
-        #         Owner: AWS
-        #         Provider: CodeBuild
-        #         Version: '1'
-        #       Configuration:
-        #         ProjectName: Patching
-        #       InputArtifacts:
-        #         - Name: SourceArtifact
-        #       OutputArtifacts:
-        #         - Name: BuildArtifact
-        #       RunOrder: 1
+        - Name: BuildStage
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: Patching
+              InputArtifacts:
+                - Name: SourceArtifact
+              OutputArtifacts:
+                - Name: BuildArtifact
+              RunOrder: 1
 
-        # - Name: DeploySNS
-        #   Actions:
-        #     - Name: DeployAction
-        #       ActionTypeId:
-        #         Category: Deploy
-        #         Owner: AWS
-        #         Provider: CloudFormation
-        #         Version: '1'
-        #       InputArtifacts:
-        #         - Name: SourceArtifact
-        #       Configuration:
-        #         ActionMode: CREATE_UPDATE
-        #         StackName: !Ref StackName
-        #         Capabilities: CAPABILITY_NAMED_IAM
-        #         TemplatePath: !Sub SourceArtifact::templates/${TemplateSNS}
-        #         TemplateConfiguration: !Sub SourceArtifact::parameters/${ParametersSNS}
-        #         RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-        #       RunOrder: 1
-        #       OutputArtifacts:
-        #         - Name: SNSOutput
+        - Name: DeploySNS
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: '1'
+              InputArtifacts:
+                - Name: SourceArtifact
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Ref StackName
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: !Sub SourceArtifact::templates/${TemplateSNS}
+                TemplateConfiguration: !Sub SourceArtifact::parameters/${ParametersSNS}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+              RunOrder: 1
+              OutputArtifacts:
+                - Name: SNSOutput
 
-        # - Name: DeploySSMDocument
-        #   Actions:
-        #     - Name: DeployAction
-        #       ActionTypeId:
-        #         Category: Deploy
-        #         Owner: AWS
-        #         Provider: CloudFormation
-        #         Version: '1'
-        #       InputArtifacts:
-        #         - Name: SourceArtifact
-        #       Configuration:
-        #         ActionMode: CREATE_UPDATE
-        #         StackName: !Ref StackName
-        #         Capabilities: CAPABILITY_NAMED_IAM
-        #         TemplatePath: !Sub SourceArtifact::templates/${TemplateDocument}
-        #         RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-        #       RunOrder: 1
+        - Name: DeploySSMDocument
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: '1'
+              InputArtifacts:
+                - Name: SourceArtifact
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Ref StackName
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: !Sub SourceArtifact::templates/${TemplateDocument}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+              RunOrder: 1
 
         - Name: DeployLambdaDeleteSnapshot
           Actions:
