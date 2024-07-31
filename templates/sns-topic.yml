@@ -27,5 +27,6 @@ Resources:
 
 Outputs:
   SnsTopicArn:
-    Description: "ARN of the SNS topic"
     Value: !Ref SNSTopic
+    Export:
+      Name: SnsTopicArn
