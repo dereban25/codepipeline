@@ -133,10 +133,11 @@ Resources:
             Resource:
               - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/LambdaDeleteSnapshot'
               - '*'
-
-
-
-
+          - Sid: 'Events'
+            Effect: Allow
+            Action:
+              - events:DescribeRule
+            Resource: '*'
 
 
 
