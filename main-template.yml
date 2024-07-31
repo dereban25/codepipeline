@@ -252,7 +252,7 @@ Resources:
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
-      Name: Patching
+      Name: MultiAccountPatchingPipeline
       RoleArn: !GetAtt CodePipelineServiceSourceRole.Arn
       ArtifactStore:
         Type: S3
