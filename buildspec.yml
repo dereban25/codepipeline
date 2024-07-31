@@ -20,15 +20,12 @@ phases:
         
       - echo Downloading the latest artifact from S3...
       - aws s3 cp s3://$PIPELINE_BUCKET/$LATEST_ARTIFACT .
-      
-      - echo Listing contents of the current directory after download...
-      - ls -l
 
       - echo Extracting artifact...
       - unzip $LATEST_ARTIFACT -d extracted-artifacts || echo "Unzip failed"
 
       - echo Copying DeleteSnapshot.zip to the target S3 bucket...
-      - aws s3 cp extracted-artifacts/zip/DeleteSnapshot.zip s3://$PIPELINE_BUCKET/DeleteSnapshot.zip
+      - aws s3 cp extracted-artifacts/zip/DeleteSnapshot.zip s3://$PIPELINE_BUCKET/
 
   post_build:
     commands:
