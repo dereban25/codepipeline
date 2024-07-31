@@ -17,7 +17,7 @@ Parameters:
   GitHubBranchName:
     Type: String
     Description: (Required) Specify the branch name
-    Default: 'patching'
+    Default: 'patching' 
 
 
   # Templates
