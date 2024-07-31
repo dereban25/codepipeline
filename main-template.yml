@@ -64,7 +64,7 @@ Parameters:
   # CodeBuild Project Name
   CodeBuildProjectName:
     Type: String
-    Description: 'Name of the CodeBuild project'
+    Description: '(Optional) Name of the CodeBuild project'
     Default: 'TemplateValidationAndArtifactUpload'
 
 Resources:
