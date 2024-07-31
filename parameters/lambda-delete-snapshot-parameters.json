@@ -1,6 +1,5 @@
 {
     "Parameters": {
-      "S3Key": "delete-snapshot.zip",
       "Days": "2",
       "ExceptionAccountIds": "",
       "ExceptMasterAccount": "False",
@@ -12,7 +11,3 @@
       "LambdaFunctionName": "LambdaDeleteSnapshot"
     }
   }
-  
-
-
-  "SnsTopicArn": "arn:aws:sns:us-east-1:007695491693:Max",

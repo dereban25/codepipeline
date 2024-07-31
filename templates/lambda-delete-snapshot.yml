@@ -6,33 +6,27 @@ Parameters:
 
   S3Bucket:
     Type: String
-    Default: codepipeline-007695491693-us-east-1
     Description: The S3 bucket where the Lambda function ZIP file is stored
 
   S3Key:
     Type: String
-    Default: DeleteSnapshot.zip
     Description: The S3 key for the Lambda function ZIP file
     
   Days:
     Type: String
     Description: Number of days for the function to process
-    Default: '2'
 
   ExceptionAccountIds:
     Type: String
     Description: Exception account IDs
-    Default: '905418384534'
 
   ExceptMasterAccount:
     Type: String
     Description: Exclude master account (True or False)
-    Default: 'False'
 
   RegionsToProcess:
     Type: String
     Description: Regions to process (comma-separated)
-    Default: 'us-east-1'
 
   RoleName:
     Type: String
@@ -42,7 +36,6 @@ Parameters:
   SnsTopicArn:
     Type: String
     Description: SNS Topic ARN for notifications
-    Default: arn:aws:sns:us-east-1:007695491693:Max
 
   TagKey:
     Type: String
@@ -98,4 +91,4 @@ Resources:
             Schedule: cron(0 0 ? * * *)
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto
-      Role: !Ref LambdaRoleName # Use Role for specifying IAM role ARN
+      Role: !Ref LambdaRoleName
