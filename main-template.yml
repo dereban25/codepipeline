@@ -240,9 +240,6 @@ Resources:
             - Name: PIPELINE_BUCKET
               Type: PLAINTEXT
               Value: !Ref PipelineBucket
-            - Name: PIPELINE_BUCKET
-              Type: PLAINTEXT
-              Value: !Ref PipelineBucket
         ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
         TimeoutInMinutes: 5
         Description: "CodeBuild project for the Patching pipeline"
