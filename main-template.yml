@@ -173,8 +173,6 @@ Resources:
               - events:DeleteRule
             Resource: '*'
 
-codebuild:DeleteProject
-
   # IAM Role for the source stage of the CodePipeline
   CodePipelineServiceSourceRole:
     Type: AWS::IAM::Role
