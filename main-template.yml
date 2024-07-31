@@ -43,12 +43,12 @@ Parameters:
   ParametersSNS: 
     Type: String
     Description: '(Required) JSON file with parameters for the SNS topic'
-    Default: 'sns-topic-parameters.json'
+    Default: 'parameters/sns-topic-parameters.json'
 
   ParametersLambdaDeleteSnapshot: 
     Type: String
     Description: '(Required) JSON file with parameters for the Lambda function to delete snapshots'
-    Default: 'lambda-delete-snapshot-parameters.json'
+    Default: 'parameters/lambda-delete-snapshot-parameters.json'
 
 Resources:
   # S3 bucket for storing pipeline artifacts
@@ -307,8 +307,8 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: !Sub SourceArtifact::templates/${TemplateSNS}
-                TemplateConfiguration: !Sub SourceArtifact::parameters/${ParametersSNS}
+                TemplatePath: !Sub SourceArtifact::${TemplateSNS}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersSNS}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
               OutputArtifacts:
@@ -328,7 +328,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: !Sub SourceArtifact::templates/${TemplateDocument}
+                TemplatePath: !Sub SourceArtifact::${TemplateDocument}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
 
@@ -347,8 +347,8 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-                TemplatePath: !Sub SourceArtifact::templates/${TemplateLambdaDeleteSnapshot}
-                TemplateConfiguration: !Sub SourceArtifact::parameters/${ParametersLambdaDeleteSnapshot}
+                TemplatePath: !Sub SourceArtifact::${TemplateLambdaDeleteSnapshot}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaDeleteSnapshot}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
                 ParameterOverrides: !Sub |
                   {
