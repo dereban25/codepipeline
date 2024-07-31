@@ -366,7 +366,7 @@ Resources:
                   {
                     "S3Bucket": "${PipelineBucket}",
                     "S3Key": "${TemplateLambdaDeleteSnapshot}",
-                    "SnsTopicArn": "${SnsTopicArn}"
+                    "SnsTopicArn": "${SNSOutput}"
                   }
               RunOrder: 1
         - Name: DeployLambdaRunMultiAccountsPatching
@@ -391,7 +391,7 @@ Resources:
                   {
                     "S3Bucket": "${PipelineBucket}",
                     "S3Key": "${TemplateLambdaRunMultiAccountsPatching}",
-                    "SnsTopicArn": "${SnsTopicArn}"
+                    "SnsTopicArn": "${SNSOutput}"
                   }
               RunOrder: 1
       ExecutionMode: QUEUED
