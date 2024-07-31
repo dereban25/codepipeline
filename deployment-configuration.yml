@@ -1,4 +1,7 @@
-template-file-path: ./main-template.yml
+# Deployment Configuration
+
+template-file-path: './main-template.yml'
+
 tags:
-    Name: 'gitsync'
-    Project: 'Patching'
+  Name: 'gitsync'
+  Project: 'Patching'
