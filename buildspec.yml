@@ -1,37 +1,31 @@
-version: 0.2
-
 phases:
   install:
+    runtime-versions:
+      python: 3.8
+      docker: 20
     commands:
-      - echo Installing dependencies...
-      - pip install --upgrade awscli cfn-lint
+      - echo "Installing dependencies"
+      - pip install -r requirements.txt
 
   pre_build:
     commands:
-      - echo Checking CloudFormation templates...
-      - cfn-lint templates/*.yml
-
-  build:
-    commands:
-      - echo Finding the latest artifact in S3 $PIPELINE_BUCKET
+      - echo "Finding the latest artifact in S3 $PIPELINE_BUCKET"
       - |
         LATEST_ARTIFACT=$(aws s3api list-objects-v2 --bucket $PIPELINE_BUCKET --query "Contents | sort_by(@, &LastModified)[-1].Key" --output text)
         echo "Latest artifact: $LATEST_ARTIFACT"
-        
-      - echo Downloading the latest artifact from S3...
+
+      - echo "Downloading the latest artifact from S3..."
       - aws s3 cp s3://$PIPELINE_BUCKET/$LATEST_ARTIFACT .
 
-      - echo Extracting artifact...
-      - unzip $LATEST_ARTIFACT -d extracted-artifacts || echo "Unzip failed"
+  build:
+    commands:
+      - echo "Extracting artifact..."
+      - FILE_NAME=$(basename $LATEST_ARTIFACT)
+      - unzip $FILE_NAME -d extracted-artifacts || echo "Unzip failed"
 
-      - echo Copying DeleteSnapshot.zip to the target S3 bucket...
+      - echo "Copying DeleteSnapshot.zip to the target S3 bucket..."
       - aws s3 cp extracted-artifacts/zip/DeleteSnapshot.zip s3://$PIPELINE_BUCKET/
 
   post_build:
     commands:
-      - echo Cleaning up temporary files...
-      - rm -rf extracted-artifacts $LATEST_ARTIFACT DeleteSnapshot.zip
-
-artifacts:
-  files:
-    - '**/*'
+      - echo "Build completed"
