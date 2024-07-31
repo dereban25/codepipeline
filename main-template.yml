@@ -36,6 +36,7 @@ Parameters:
   TemplateLambdaRunMultiAccountsPatching: 
     Type: String
     Description: '(Required) CloudFormation template for the Lambda function to run multi-accounts patching'
+    Default: 'templates/lambda-run-multi-accounts-patching.yml'
 
 
   # Parameters
