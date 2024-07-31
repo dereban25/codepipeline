@@ -26,10 +26,10 @@ phases:
       - unzip $FILE_NAME -d extracted-artifacts || echo "Unzip failed"
 
       - echo "Copying DeleteSnapshot.zip to the target S3 bucket..."
-      - aws s3 cp --force extracted-artifacts/lambda_code/delete-snapshot.zip s3://$PIPELINE_BUCKET/
+      - aws s3 cp --force extracted-artifacts/$LAMBDA_CODE_DELETE_SNAPSHOT s3://$PIPELINE_BUCKET/
 
       - echo "Copying RunMultiAccountsPatching.zip to the target S3 bucket..."
-      - aws s3 cp --force extracted-artifacts/lambda_code/run-multi-accounts-patching.zip s3://$PIPELINE_BUCKET/
+      - aws s3 cp --force extracted-artifacts/$LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING s3://$PIPELINE_BUCKET/
 
   post_build:
     commands:

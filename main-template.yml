@@ -50,6 +50,17 @@ Parameters:
     Description: '(Required) JSON file with parameters for the Lambda function to delete snapshots'
     Default: 'parameters/lambda-delete-snapshot-parameters.json'
 
+ # Lambda Code
+  LambdaCodeDeleteSnapshot:
+    Type: String
+    Description: '(Required) Path to the Lambda code for deleting snapshots'
+    Default: 'lambda_code/delete-snapshot.zip'
+
+  LambdaCodeRunMultiAccountsPatching:
+    Type: String
+    Description: '(Required) Path to the Lambda code for running multi-accounts patching'
+    Default: 'lambda_code/run-multi-accounts-patching.zip'
+
 Resources:
   # S3 bucket for storing pipeline artifacts
   PipelineBucket:
@@ -244,6 +255,15 @@ Resources:
             - Name: PIPELINE_BUCKET
               Type: PLAINTEXT
               Value: !Ref PipelineBucket
+
+            - Name: LAMBDA_CODE_DELETE_SNAPSHOT
+              Type: PLAINTEXT
+              Value: !Ref LambdaCodeDeleteSnapshot
+
+            - Name: LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING
+              Type: PLAINTEXT
+              Value: !Ref LambdaCodeRunMultiAccountsPatching
+
         ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
         TimeoutInMinutes: 5
         Description: "CodeBuild project for the Patching pipeline"
