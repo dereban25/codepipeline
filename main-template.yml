@@ -391,7 +391,7 @@ Resources:
                   {
                     "S3Bucket": "${PipelineBucket}",
                     "S3Key": "${TemplateLambdaRunMultiAccountsPatching}",
-                    "SnsTopicArn": "${SNSOutput}"
+                    "SnsTopicArn": !GetAtt "${SNSOutput.SnsTopicArn}"
                   }
               RunOrder: 1
       ExecutionMode: QUEUED
