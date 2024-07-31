@@ -365,7 +365,7 @@ Resources:
                 ParameterOverrides: !Sub |
                   {
                     "S3Bucket": "${PipelineBucket}",
-                    "S3Key": "${TemplateLambdaDeleteSnapshot}",
+                    "S3Key": "${basename ${LambdaCodeDeleteSnapshot}}",
                     "SnsTopicArn": {"Fn::GetArtifactAtt" : ["SNSOutput", "SnsTopicArn"]}
                   }
               RunOrder: 1
@@ -390,7 +390,7 @@ Resources:
                 ParameterOverrides: !Sub |
                   {
                     "S3Bucket": "${PipelineBucket}",
-                    "S3Key": "${TemplateLambdaRunMultiAccountsPatching}",
+                    "S3Key": "${basename ${LambdaCodeRunMultiAccountsPatching}}",
                     "SnsTopicArn": {"Fn::GetArtifactAtt" : ["SNSOutput", "SnsTopicArn"]}
                   }
               RunOrder: 1
