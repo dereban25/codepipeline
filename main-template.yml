@@ -117,6 +117,7 @@ Resources:
           - Effect: Allow
             Action:
               - iam:PassRole
+              - iam:DeleteRole
             Resource: '*'
           - Sid: 'CloudFormation'
             Effect: Allow
@@ -171,6 +172,8 @@ Resources:
               - events:RemoveTargets
               - events:DeleteRule
             Resource: '*'
+
+codebuild:DeleteProject
 
   # IAM Role for the source stage of the CodePipeline
   CodePipelineServiceSourceRole:
