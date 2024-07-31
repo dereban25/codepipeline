@@ -1,0 +1,50 @@
+Parameters:
+  StackName:
+    Type: String
+    Description: '(Optional) Specify Stack Name'
+    Default: 'PatchingMultiAccountsWithOnPrem'
+
+  CodestarConnection:
+    Type: String
+    Description: '(Required) ARN of the CodeStar connection for GitHub'
+    Default: 'arn:aws:codestar-connections:us-east-1:007695491693:connection/b965019a-d6b5-4bfa-ab0b-2596e6996504'
+
+  GitHubFullRepositoryId:
+    Type: String
+    Description: '(Required) Repository name. Example: github_username/repository_name'
+    Default: 'dereban25/codepipeline'
+
+  GitHubBranchName:
+    Type: String
+    Description: '(Required) Specify the branch name'
+    Default: 'patching'
+
+  TemplateSNS:
+    Type: String
+    Description: '(Required) CloudFormation template for creating SNS Topic'
+    Default: 'templates/sns-topic.yml'
+
+  TemplateDocument:
+    Type: String
+    Description: '(Required) CloudFormation template for creating SSM Document'
+    Default: 'templates/ssm-document.yml'
+
+  TemplateLambdaDeleteSnapshot:
+    Type: String
+    Description: '(Required) CloudFormation template for the Lambda function to delete snapshots'
+    Default: 'templates/lambda-delete-snapshot.yml'
+
+  TemplateLambdaRunMultiAccountsPatching:
+    Type: String
+    Description: '(Required) CloudFormation template for the Lambda function to run multi-accounts patching'
+    Default: 'templates/lambda-run-multi-accounts-patching.yml'
+
+  ParametersSNS:
+    Type: String
+    Description: '(Required) JSON file with parameters for the SNS topic'
+    Default: 'parameters/sns-topic-parameters.json'
+
+  ParametersLambdaDeleteSnapshot:
+    Type: String
+    Description: '(Required) JSON file with parameters for the Lambda function to delete snapshots'
+    Default: 'parameters/lambda-delete-snapshot-parameters.json'
