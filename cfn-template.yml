@@ -331,8 +331,7 @@ Resources:
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
                 ParameterOverrides: !Sub |
                   {
-                    "S3Bucket": "${PipelineBucket}",
-                    "S3Key": !Sub SourceArtifact::templates/DeleteSnapshot.zip
+                    "S3Bucket": "${PipelineBucket}"
                   }
 
               RunOrder: 1
