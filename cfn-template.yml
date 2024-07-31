@@ -138,6 +138,8 @@ Resources:
             Action:
               - events:DescribeRule
               - events:PutRule
+              - events:PutTargets
+              - events:RemoveTargets
             Resource: '*'
 
 
