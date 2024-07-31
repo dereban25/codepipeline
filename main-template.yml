@@ -19,40 +19,33 @@ Parameters:
     Description: (Required) Specify the branch name
     Default: 'patching'
 
-
   # Templates
   TemplateSNSTopic: 
     Type: String
     Description: '(Required) CloudFormation template for creating SNS Topic'
     Default: 'templates/sns-topic.yml'
-
   TemplateSSMDocument: 
     Type: String
     Description: '(Required) CloudFormation template for creating SSM Document'
     Default: 'templates/ssm-document.yml'
-
   TemplateLambdaDeleteSnapshot: 
     Type: String
     Description: '(Required) CloudFormation template for the Lambda function to delete snapshots'
     Default: 'templates/lambda-delete-snapshot.yml'
-
   TemplateLambdaRunMultiAccountsPatching: 
     Type: String
     Description: '(Required) CloudFormation template for the Lambda function to run multi-accounts patching'
     Default: 'templates/lambda-run-multi-accounts-patching.yml'
-
 
   # Parameters
   ParametersSNSTopic: 
     Type: String
     Description: '(Required) JSON file with parameters for the SNS topic'
     Default: 'parameters/sns-topic-parameters.json'
-
   ParametersLambdaDeleteSnapshot: 
     Type: String
     Description: '(Required) JSON file with parameters for the Lambda function to delete snapshots'
     Default: 'parameters/lambda-delete-snapshot-parameters.json'
-
   ParametersLambdaRunMultiAccountsPatching: 
     Type: String
     Description: '(Required) JSON file with parameters for the Lambda function to run lambda for multi accounts patching'
@@ -63,11 +56,16 @@ Parameters:
     Type: String
     Description: '(Required) Path to the Lambda code for deleting snapshots'
     Default: 'lambda_code/delete-snapshot.zip'
-
   LambdaCodeRunMultiAccountsPatching:
     Type: String
     Description: '(Required) Path to the Lambda code for running multi-accounts patching'
     Default: 'lambda_code/run-multi-accounts-patching.zip'
+
+  # CodeBuild Project Name
+  CodeBuildProjectName:
+    Type: String
+    Description: 'Name of the CodeBuild project'
+    Default: 'TemplateValidationAndArtifactUpload'
 
 Resources:
   # S3 bucket for storing pipeline artifacts
@@ -96,8 +94,6 @@ Resources:
               Service: 
               - cloudformation.amazonaws.com
             Action: sts:AssumeRole
-            
-
   CodePipelineServiceDeployRoleInlinePolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -176,11 +172,6 @@ Resources:
               - events:DeleteRule
             Resource: '*'
 
-
-
-
-
-
   # IAM Role for the source stage of the CodePipeline
   CodePipelineServiceSourceRole:
     Type: AWS::IAM::Role
@@ -195,7 +186,6 @@ Resources:
                 - codepipeline.amazonaws.com
                 - codebuild.amazonaws.com
             Action: sts:AssumeRole
-
   CodePipelineServiceSourceRoleInlinePolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -246,10 +236,10 @@ Resources:
             Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*'
 
   # CodeBuild definition
-  PatchingCodeBuildProject:
+  TemplateValidationAndArtifactUploadProject:
       Type: AWS::CodeBuild::Project
       Properties:
-        Name: Patching
+        Name: !Ref CodeBuildProjectName
         Source:
           Type: CODEPIPELINE
           BuildSpec: 'buildspec.yml'
@@ -263,15 +253,12 @@ Resources:
             - Name: PIPELINE_BUCKET
               Type: PLAINTEXT
               Value: !Ref PipelineBucket
-
             - Name: LAMBDA_CODE_DELETE_SNAPSHOT
               Type: PLAINTEXT
               Value: !Ref LambdaCodeDeleteSnapshot
-
             - Name: LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING
               Type: PLAINTEXT
               Value: !Ref LambdaCodeRunMultiAccountsPatching
-
         ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
         TimeoutInMinutes: 5
         Description: "CodeBuild project for the Patching pipeline"
@@ -288,7 +275,7 @@ Resources:
       PipelineType: V2
       RestartExecutionOnUpdate: true
       Stages:
-        - Name: DownloadCodeFromGithub
+        - Name: FetchSource
           Actions:
             - Name: SourceAction
               ActionTypeId:
@@ -304,8 +291,7 @@ Resources:
               RunOrder: 1
               OutputArtifacts:
                 - Name: SourceArtifact
-
-        - Name: BuildStage
+        - Name: ExtractArtifactsToS3
           Actions:
             - Name: BuildAction
               ActionTypeId:
@@ -314,14 +300,13 @@ Resources:
                 Provider: CodeBuild
                 Version: '1'
               Configuration:
-                ProjectName: Patching
+                ProjectName: !Ref CodeBuildProjectName
               InputArtifacts:
                 - Name: SourceArtifact
               OutputArtifacts:
                 - Name: BuildArtifact
               RunOrder: 1
-
-        - Name: DeploySNS
+        - Name: DeploySNSTopic
           Actions:
             - Name: DeployAction
               ActionTypeId:
@@ -341,7 +326,6 @@ Resources:
               RunOrder: 1
               OutputArtifacts:
                 - Name: SNSOutput
-
         - Name: DeploySSMDocument
           Actions:
             - Name: DeployAction
@@ -359,7 +343,6 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateSSMDocument}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
-
         - Name: DeployLambdaDeleteSnapshot
           Actions:
             - Name: DeployAction
@@ -382,10 +365,8 @@ Resources:
                   {
                     "S3Bucket": "${PipelineBucket}"
                   }
-
               RunOrder: 1
-
-        - Name: DeployLambdaDeleteSnapshot
+        - Name: DeployLambdaRunMultiAccountsPatching
           Actions:
             - Name: DeployAction
               ActionTypeId:
@@ -407,7 +388,5 @@ Resources:
                   {
                     "S3Bucket": "${PipelineBucket}"
                   }
-
               RunOrder: 1
-
       ExecutionMode: QUEUED
