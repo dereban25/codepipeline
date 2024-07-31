@@ -56,7 +56,11 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub 'codepipeline-${AWS::AccountId}-${AWS::Region}'
-      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
       VersioningConfiguration:
         Status: Enabled
 
