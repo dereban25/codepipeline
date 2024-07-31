@@ -114,6 +114,7 @@ Resources:
               - sns:Unsubscribe
             Resource: 
               - !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
+              - '*'
           - Effect: Allow
             Action:
               - iam:PassRole
