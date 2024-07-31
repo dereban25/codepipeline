@@ -21,12 +21,12 @@ Parameters:
 
 
   # Templates
-  TemplateSNS: 
+  TemplateSNSTopic: 
     Type: String
     Description: '(Required) CloudFormation template for creating SNS Topic'
     Default: 'templates/sns-topic.yml'
 
-  TemplateDocument: 
+  TemplateSSMDocument: 
     Type: String
     Description: '(Required) CloudFormation template for creating SSM Document'
     Default: 'templates/ssm-document.yml'
@@ -43,7 +43,7 @@ Parameters:
 
 
   # Parameters
-  ParametersSNS: 
+  ParametersSNSTopic: 
     Type: String
     Description: '(Required) JSON file with parameters for the SNS topic'
     Default: 'parameters/sns-topic-parameters.json'
@@ -52,6 +52,11 @@ Parameters:
     Type: String
     Description: '(Required) JSON file with parameters for the Lambda function to delete snapshots'
     Default: 'parameters/lambda-delete-snapshot-parameters.json'
+
+  ParametersLambdaRunMultiAccountsPatching: 
+    Type: String
+    Description: '(Required) JSON file with parameters for the Lambda function to run lambda for multi accounts patching'
+    Default: 'parameters/lambda-run-multi-accounts-patching.json'
 
  # Lambda Code
   LambdaCodeDeleteSnapshot:
@@ -330,8 +335,8 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: !Sub SourceArtifact::${TemplateSNS}
-                TemplateConfiguration: !Sub SourceArtifact::${ParametersSNS}
+                TemplatePath: !Sub SourceArtifact::${TemplateSNSTopic}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersSNSTopic}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
               OutputArtifacts:
@@ -351,7 +356,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: !Sub SourceArtifact::${TemplateDocument}
+                TemplatePath: !Sub SourceArtifact::${TemplateSSMDocument}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
 
@@ -379,4 +384,30 @@ Resources:
                   }
 
               RunOrder: 1
+
+        - Name: DeployLambdaDeleteSnapshot
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: '1'
+              InputArtifacts:
+                - Name: SourceArtifact
+                - Name: SNSOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Ref StackName
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatching}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaRunMultiAccountsPatching}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "S3Bucket": "${PipelineBucket}"
+                  }
+
+              RunOrder: 1
+
       ExecutionMode: QUEUED
