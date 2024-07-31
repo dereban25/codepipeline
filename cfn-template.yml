@@ -131,6 +131,7 @@ Resources:
               - lambda:PutRuntimeManagementConfig
               - lambda:DeleteFunctionEventInvokeConfig
               - lambda:RemovePermission
+              - lambda:AddPermission
             Resource:
               - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/LambdaDeleteSnapshot'
               - '*'
