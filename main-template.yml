@@ -337,7 +337,7 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateSNSTopic}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersSNSTopic}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-              RunOrder: 1
+              RunOrder: 2
               OutputArtifacts:
                 - Name: SNSOutput
         # Deploy SSM custom document for automating patching across instances, including on-premises environments
@@ -357,7 +357,7 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: !Sub SourceArtifact::${TemplateSSMDocument}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-              RunOrder: 1
+              RunOrder: 3
         # Deploy Lambda function for snapshot deletion
         - Name: DeployLambdaDeleteSnapshot
           Actions:
@@ -383,7 +383,7 @@ Resources:
                     "S3Key" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]},
                     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
-              RunOrder: 1
+              RunOrder: 4
         # Deploy Lambda function for multi-account patching
         - Name: DeployLambdaRunMultiAccountsPatching
           Actions:
@@ -409,5 +409,5 @@ Resources:
                     "S3Key" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]},
                     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
-              RunOrder: 1
+              RunOrder: 5
       ExecutionMode: QUEUED
