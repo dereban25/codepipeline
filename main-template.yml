@@ -379,9 +379,9 @@ Resources:
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
                 ParameterOverrides: |
                   {
-                    "S3Bucket": {"Fn::Sub" : PipelineBucket}",
-                    "S3Key": {"Fn::Sub" : LambdaCodeDeleteSnapshot},
-                    "SnsTopicArn": { "Fn::GetParam" : ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                    "S3Bucket": {"Fn::Sub": "${PipelineBucket}"},
+                    "S3Key": {"Fn::Sub": "${LambdaCodeDeleteSnapshot}"},
+                    "SnsTopicArn": {"Fn::GetAtt": ["SNSOutput", "SnsTopicArn"]}
                   }
               RunOrder: 1
         # Deploy Lambda function for multi-account patching
@@ -405,9 +405,9 @@ Resources:
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
                 ParameterOverrides: |
                   {
-                    "S3Bucket": {"Fn::Sub" : PipelineBucket}",
-                    "S3Key": {"Fn::Sub" : LambdaCodeRunMultiAccountsPatching},
-                    "SnsTopicArn": { "Fn::GetParam" : ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                    "S3Bucket": {"Fn::Sub": "${PipelineBucket}"},
+                    "S3Key": {"Fn::Sub": "${LambdaCodeRunMultiAccountsPatching}"},
+                    "SnsTopicArn": {"Fn::GetAtt": ["SNSOutput", "SnsTopicArn"]}
                   }
               RunOrder: 1
       ExecutionMode: QUEUED
