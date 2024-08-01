@@ -29,7 +29,7 @@ phases:
       - aws s3 cp --force extracted-artifacts/$LAMBDA_CODE_DELETE_SNAPSHOT s3://$PIPELINE_BUCKET/$LAMBDA_CODE_DELETE_SNAPSHOT
 
       - echo "Copying $(basename $LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING) to the target S3 bucket..."
-      - aws s3 cp --force extracted-artifacts/$LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING s3://$PIPELINE_BUCKET/LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING
+      - aws s3 cp --force extracted-artifacts/$LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING s3://$PIPELINE_BUCKET/$LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING
 
   post_build:
     commands:
