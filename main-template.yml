@@ -377,25 +377,12 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateLambdaDeleteSnapshot}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaDeleteSnapshot}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides:
-                  S3Bucket:
-                    Fn::GetArtifactAtt:
-                      - SourceArtifact
-                      - BucketName
-                  S3Key:
-                    !Sub "${LambdaCodeDeleteSnapshot}"
-                  SnsTopicArn:
-                    Fn::GetParam:
-                      - SNSOutput
-                      - SNSOutput.json
-                      - SnsTopicArn
-
-                # ParameterOverrides: |
-                #   {
-                #     "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                #     "S3Key" : {"Fn::Sub": "${LambdaCodeDeleteSnapshot}"},
-                #     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
-                #   }
+                ParameterOverrides: |
+                  {
+                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                    "S3Key" : "lambda_code/delete-snapshot.zip",
+                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                  }
               RunOrder: 4
         # Deploy Lambda function for multi-account patching
         - Name: DeployLambdaRunMultiAccountsPatching
@@ -416,24 +403,11 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatching}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaRunMultiAccountsPatching}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides:
-                  S3Bucket:
-                    Fn::GetArtifactAtt:
-                      - SourceArtifact
-                      - BucketName
-                  S3Key:
-                    !Sub "${LambdaCodeRunMultiAccountsPatching}"
-                  SnsTopicArn:
-                    Fn::GetParam:
-                      - SNSOutput
-                      - SNSOutput.json
-                      - SnsTopicArn
-
-                # ParameterOverrides: |
-                #   {
-                #     "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                #     "S3Key" : {"Fn::Sub" : "${LambdaCodeRunMultiAccountsPatching}"},
-                #     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
-                #   }
+                ParameterOverrides: |
+                  {
+                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                    "S3Key" : "lambda_code/run-multi-accounts-patching.zip"},
+                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                  }
               RunOrder: 4
       ExecutionMode: QUEUED
