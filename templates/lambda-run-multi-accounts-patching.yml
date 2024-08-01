@@ -6,77 +6,58 @@ Parameters:
 
   LambdaFunctionName:
     Type: String
-    Default: RunMultiAccountsPatchingTest
     Description: Lambda Name
 
   S3Bucket:
     Type: String
-    Default: patchingdereban
     Description: The S3 bucket where the Lambda function ZIP file is stored
 
   S3Key:
     Type: String
-    Default: RunMultiAccountsPatching.zip
     Description: The S3 key for the Lambda function ZIP file
 
   AutomationAssumeRole:
     Type: String
-    Default: AWS-SystemsManager-AutomationAdministrationRole
     Description: Role for automation execution
 
   TargetLocationMaxErrors:
     Type: String
-    Default: '1'
     Description: Max errors allowed in target location
 
   SnsTopicArn:
     Type: String
-    Default: arn:aws:sns:us-east-1:007695491693:Max
     Description: SNS Topic ARN for notifications
 
   ExecutionRoleName:
     Type: String
-    Default: AWS-SystemsManager-AutomationExecutionRole
     Description: Role for execution
 
   DocumentName:
     Type: String
-    Default: PatchInstanceWithRollbackKeepSnapshot
     Description: SSM Document name
 
   ExceptMasterAccount:
     Type: String
-    Default: 'False'
     Description: Exclude master account True or False
 
   ExceptionAccountIds:
     Type: String
-    Default: '905418384534'
     Description: Exception account IDs
 
   TargetRegionIds:
     Type: String
-    Default: us-east-1
     Description: Target region IDs
 
   ResourceGroupName:
     Type: String
-    Default: PatchingGroup
     Description: Resource group name
 
   TargetLocationMaxConcurrency:
     Type: String
-    Default: '10'
     Description: Max concurrency for target location
-
-  ReportS3Bucket:
-    Type: String
-    Default: 'patchingdereban'
-    Description: S3 bucket for reports
 
   LambdaRoleName:
     Type: String
-    Default: arn:aws:iam::007695491693:role/Lambda-SSM-RunMultiAccountsPatchingRole
     Description: Existing IAM role name for Lambda function
 
 Resources:
@@ -107,7 +88,7 @@ Resources:
           TARGET_REGION_IDS: !Ref TargetRegionIds
           RESOURCE_GROUP_NAME: !Ref ResourceGroupName
           TARGET_LOCATION_MAX_CONCURRENCY: !Ref TargetLocationMaxConcurrency
-          REPORT_S3_BUCKET: !Ref ReportS3Bucket
+          REPORT_S3_BUCKET: !Ref S3Bucket
       EventInvokeConfig:
         MaximumEventAgeInSeconds: 21600
         MaximumRetryAttempts: 2

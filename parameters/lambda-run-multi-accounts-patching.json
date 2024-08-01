@@ -10,7 +10,6 @@
       "TargetRegionIds": "us-east-1",
       "ResourceGroupName": "PatchingGroup",
       "TargetLocationMaxConcurrency": "10",
-      "ReportS3Bucket": "patchingdereban",
       "LambdaRoleName": "arn:aws:iam::007695491693:role/Lambda-SSM-RunMultiAccountsPatchingRole"
     }
   }
