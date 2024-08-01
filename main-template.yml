@@ -379,13 +379,13 @@ Resources:
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
                 ParameterOverrides:
                   S3Bucket:
-                    !GetArtifactAtt
+                    Fn::GetArtifactAtt:
                       - SourceArtifact
                       - BucketName
                   S3Key:
                     !Sub "${LambdaCodeDeleteSnapshot}"
                   SnsTopicArn:
-                    !GetParam
+                    Fn::GetParam:
                       - SNSOutput
                       - SNSOutput.json
                       - SnsTopicArn
@@ -418,16 +418,17 @@ Resources:
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
                 ParameterOverrides:
                   S3Bucket:
-                    !GetArtifactAtt
+                    Fn::GetArtifactAtt:
                       - SourceArtifact
                       - BucketName
                   S3Key:
                     !Sub "${LambdaCodeRunMultiAccountsPatching}"
                   SnsTopicArn:
-                    !GetParam
+                    Fn::GetParam:
                       - SNSOutput
                       - SNSOutput.json
                       - SnsTopicArn
+
                 # ParameterOverrides: |
                 #   {
                 #     "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
