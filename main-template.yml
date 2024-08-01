@@ -318,28 +318,28 @@ Resources:
         #       # OutputArtifacts:
         #       #   - Name: BuildArtifact
         #       RunOrder: 1
-        # # Deploy SNS Topic and configure Subscription
-        # - Name: DeploySNSTopic
-        #   Actions:
-        #     - Name: DeployAction
-        #       ActionTypeId:
-        #         Category: Deploy
-        #         Owner: AWS
-        #         Provider: CloudFormation
-        #         Version: '1'
-        #       InputArtifacts:
-        #         - Name: SourceArtifact
-        #       Configuration:
-        #         ActionMode: CREATE_UPDATE
-        #         StackName: !Ref StackName
-        #         Capabilities: CAPABILITY_NAMED_IAM
-        #         OutputFileName: SNSOutput.json
-        #         TemplatePath: !Sub SourceArtifact::${TemplateSNSTopic}
-        #         TemplateConfiguration: !Sub SourceArtifact::${ParametersSNSTopic}
-        #         RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-        #       RunOrder: 1
-        #       OutputArtifacts:
-        #         - Name: SNSOutput
+        # Deploy SNS Topic and configure Subscription
+        - Name: DeploySNSTopic
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: '1'
+              InputArtifacts:
+                - Name: SourceArtifact
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Ref StackName
+                Capabilities: CAPABILITY_NAMED_IAM
+                OutputFileName: SNSOutput.json
+                TemplatePath: !Sub SourceArtifact::${TemplateSNSTopic}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersSNSTopic}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+              RunOrder: 1
+              OutputArtifacts:
+                - Name: SNSOutput
         # Deploy SSM custom document for automating patching across instances, including on-premises environments
         - Name: DeploySSMDocument
           Actions:
