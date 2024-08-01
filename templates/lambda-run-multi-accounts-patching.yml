@@ -99,7 +99,7 @@ Resources:
         Variables:
           AUTOMATION_ASSUME_ROLE: !Ref AutomationAssumeRole
           TARGET_LOCATION_MAX_ERRORS: !Ref TargetLocationMaxErrors
-          SNS_TOPIC_ARN: !Ref SNSTopicArn
+          SNS_TOPIC_ARN: !Ref SnsTopicArn
           EXECUTION_ROLE_NAME: !Ref ExecutionRoleName
           DOCUMENT_NAME: !Ref DocumentName
           EXCEPT_MASTER_ACCOUNT: !Ref ExceptMasterAccount
