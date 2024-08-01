@@ -29,7 +29,7 @@ Parameters:
     Default: '1'
     Description: Max errors allowed in target location
 
-  SNSTopicArn:
+  SnsTopicArn:
     Type: String
     Default: arn:aws:sns:us-east-1:007695491693:Max
     Description: SNS Topic ARN for notifications
