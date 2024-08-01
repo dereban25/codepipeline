@@ -173,6 +173,14 @@ Resources:
               - events:RemoveTargets
               - events:DeleteRule
             Resource: '*'
+          - Sid: 'CodePipeline'
+            Effect: Allow
+            Action:
+              - codepipeline:DeletePipeline
+              - codepipeline:UpdatePipeline
+              - codepipeline:CreatePipeline
+              - codepipeline:GetPipeline
+            Resource: '*'
 
   # IAM Role for the source stage of the CodePipeline
   CodePipelineServiceSourceRole:
