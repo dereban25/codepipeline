@@ -1,6 +1,6 @@
 {
     "Parameters": {
-      "LambdaFunctionName": "RunMultiAccountsPatchingTest",
+      "LambdaFunctionName": "LambdaRunMultiAccountsPatching",
       "AutomationAssumeRole": "AWS-SystemsManager-AutomationAdministrationRole",
       "TargetLocationMaxErrors": "1",
       "ExecutionRoleName": "AWS-SystemsManager-AutomationExecutionRole",
