@@ -118,6 +118,8 @@ Resources:
           - Effect: Allow
             Action:
               - iam:PassRole
+              - iam:DetachRolePolicy
+              - iam:DeleteRolePolicy
               - iam:DeleteRole
             Resource: '*'
           - Sid: 'CloudFormation'
