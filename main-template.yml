@@ -52,20 +52,20 @@ Parameters:
     Default: 'parameters/lambda-run-multi-accounts-patching.json'
 
  # Lambda Code
-  # LambdaCodeDeleteSnapshot:
-  #   Type: String
-  #   Description: '(Required) Path to the Lambda code for deleting snapshots'
-  #   Default: 'lambda_code/delete-snapshot.zip'
-  # LambdaCodeRunMultiAccountsPatching:
-  #   Type: String
-  #   Description: '(Required) Path to the Lambda code for running multi-accounts patching'
-  #   Default: 'lambda_code/run-multi-accounts-patching.zip'
+  LambdaCodeDeleteSnapshot:
+    Type: String
+    Description: '(Required) Path to the Lambda code for deleting snapshots'
+    Default: 'lambda_code/delete-snapshot.zip'
+  LambdaCodeRunMultiAccountsPatching:
+    Type: String
+    Description: '(Required) Path to the Lambda code for running multi-accounts patching'
+    Default: 'lambda_code/run-multi-accounts-patching.zip'
 
   # CodeBuild Project Name
-  # CodeBuildProjectName:
-  #   Type: String
-  #   Description: '(Optional) Name of the CodeBuild project'
-  #   Default: 'TemplateValidationAndArtifactUpload'
+  CodeBuildProjectName:
+    Type: String
+    Description: '(Optional) Name of the CodeBuild project'
+    Default: 'TemplateValidationAndArtifactUpload'
 
 Resources:
   # S3 bucket for storing pipeline artifacts
@@ -380,7 +380,7 @@ Resources:
                 ParameterOverrides: |
                   {
                     "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                    "S3Key" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]},
+                    "S3Key" : { "Fn::Sub" : ["LambdaCodeDeleteSnapshot"]},
                     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
               RunOrder: 4
@@ -406,7 +406,7 @@ Resources:
                 ParameterOverrides: |
                   {
                     "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                    "S3Key" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]},
+                    "S3Key" : { "Fn::Sub" : ["LambdaCodeRunMultiAccountsPatching"]},
                     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
               RunOrder: 4
