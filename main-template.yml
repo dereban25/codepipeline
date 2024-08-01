@@ -410,4 +410,4 @@ Resources:
                     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
               RunOrder: 4
-      ExecutionMode: QUEUED
+      ExecutionMode: PARALLEL
