@@ -377,10 +377,10 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateLambdaDeleteSnapshot}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaDeleteSnapshot}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides: |
+                ParameterOverrides: !Sub |
                   {
                     "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                    "S3Key" : { "Fn::Sub" : ["LambdaCodeDeleteSnapshot"]},
+                    "S3Key" : ${LambdaCodeDeleteSnapshot},
                     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
               RunOrder: 4
