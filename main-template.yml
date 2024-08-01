@@ -325,6 +325,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM
+                OutputFileName: SNSOutput.json
                 TemplatePath: !Sub SourceArtifact::${TemplateSNSTopic}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersSNSTopic}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
@@ -370,9 +371,9 @@ Resources:
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
                 ParameterOverrides: |
                   {
-                    "S3Bucket": !Sub "${PipelineBucket}",
-                    "S3Key": "${basename ${LambdaCodeDeleteSnapshot}}",
-                    "SnsTopicArn": {"Fn::GetArtifactAtt" : ["SNSOutput", "SnsTopicArn"]}
+                    "S3Bucket": {"Fn::Sub" : PipelineBucket}",
+                    "S3Key": {"Fn::Sub" : LambdaCodeDeleteSnapshot},
+                    "SnsTopicArn": { "Fn::GetParam" : ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
               RunOrder: 1
         # Deploy Lambda function for multi-account patching
@@ -394,11 +395,11 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatching}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaRunMultiAccountsPatching}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides: !Sub |
+                ParameterOverrides: |
                   {
-                    "S3Bucket": "${PipelineBucket}",
-                    "S3Key": "${basename ${LambdaCodeRunMultiAccountsPatching}}",
-                    "SnsTopicArn": {"Fn::GetArtifactAtt" : ["SNSOutput", "SnsTopicArn"]}
+                    "S3Bucket": {"Fn::Sub" : PipelineBucket}",
+                    "S3Key": {"Fn::Sub" : LambdaCodeRunMultiAccountsPatching},
+                    "SnsTopicArn": { "Fn::GetParam" : ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
               RunOrder: 1
       ExecutionMode: QUEUED
