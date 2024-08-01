@@ -359,55 +359,55 @@ Resources:
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
         # Deploy Lambda function for snapshot deletion
-        # - Name: DeployLambdaDeleteSnapshot
-        #   Actions:
-        #     - Name: DeployAction
-        #       ActionTypeId:
-        #         Category: Deploy
-        #         Owner: AWS
-        #         Provider: CloudFormation
-        #         Version: '1'
-        #       InputArtifacts:
-        #         - Name: SourceArtifact
-        #         - Name: SNSOutput
-        #       Configuration:
-        #         ActionMode: CREATE_UPDATE
-        #         StackName: !Ref StackName
-        #         Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-        #         TemplatePath: !Sub SourceArtifact::${TemplateLambdaDeleteSnapshot}
-        #         TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaDeleteSnapshot}
-        #         RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-        #         ParameterOverrides: |
-        #           {
-        #             "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-        #             "S3Key" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]},
-        #             "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
-        #           }
-        #       RunOrder: 1
-        # # Deploy Lambda function for multi-account patching
-        # - Name: DeployLambdaRunMultiAccountsPatching
-        #   Actions:
-        #     - Name: DeployAction
-        #       ActionTypeId:
-        #         Category: Deploy
-        #         Owner: AWS
-        #         Provider: CloudFormation
-        #         Version: '1'
-        #       InputArtifacts:
-        #         - Name: SourceArtifact
-        #         - Name: SNSOutput
-        #       Configuration:
-        #         ActionMode: CREATE_UPDATE
-        #         StackName: !Ref StackName
-        #         Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-        #         TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatching}
-        #         TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaRunMultiAccountsPatching}
-        #         RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-        #         ParameterOverrides: |
-        #           {
-        #             "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-        #             "S3Key" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]},
-        #             "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
-        #           }
-        #       RunOrder: 1
+        - Name: DeployLambdaDeleteSnapshot
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: '1'
+              InputArtifacts:
+                - Name: SourceArtifact
+                - Name: SNSOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Ref StackName
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                TemplatePath: !Sub SourceArtifact::${TemplateLambdaDeleteSnapshot}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaDeleteSnapshot}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+                ParameterOverrides: |
+                  {
+                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                    "S3Key" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]},
+                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                  }
+              RunOrder: 1
+        # Deploy Lambda function for multi-account patching
+        - Name: DeployLambdaRunMultiAccountsPatching
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: '1'
+              InputArtifacts:
+                - Name: SourceArtifact
+                - Name: SNSOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Ref StackName
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatching}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaRunMultiAccountsPatching}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+                ParameterOverrides: |
+                  {
+                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                    "S3Key" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "ObjectKey"]},
+                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                  }
+              RunOrder: 1
       ExecutionMode: QUEUED
