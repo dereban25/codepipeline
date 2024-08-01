@@ -416,11 +416,23 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatching}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaRunMultiAccountsPatching}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides: |
-                  {
-                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                    "S3Key" : {"Fn::Sub" : "${LambdaCodeRunMultiAccountsPatching}"},
-                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
-                  }
+                ParameterOverrides:
+                  S3Bucket:
+                    !GetArtifactAtt
+                      - SourceArtifact
+                      - BucketName
+                  S3Key:
+                    !Sub "${LambdaCodeRunMultiAccountsPatching}"
+                  SnsTopicArn:
+                    !GetParam
+                      - SNSOutput
+                      - SNSOutput.json
+                      - SnsTopicArn
+                # ParameterOverrides: |
+                #   {
+                #     "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                #     "S3Key" : {"Fn::Sub" : "${LambdaCodeRunMultiAccountsPatching}"},
+                #     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                #   }
               RunOrder: 4
       ExecutionMode: QUEUED
