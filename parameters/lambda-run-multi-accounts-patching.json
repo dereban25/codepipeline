@@ -1,0 +1,20 @@
+{
+    "Parameters": {
+      "LambdaFunctionName": "RunMultiAccountsPatchingTest",
+      "S3Bucket": "patchingdereban",
+      "S3Key": "RunMultiAccountsPatching.zip",
+      "AutomationAssumeRole": "AWS-SystemsManager-AutomationAdministrationRole",
+      "TargetLocationMaxErrors": "1",
+      "SNSTopicArn": "arn:aws:sns:us-east-1:007695491693:Max",
+      "ExecutionRoleName": "AWS-SystemsManager-AutomationExecutionRole",
+      "DocumentName": "PatchInstanceWithRollbackKeepSnapshot",
+      "ExceptMasterAccount": "False",
+      "ExceptionAccountIds": "905418384534",
+      "TargetRegionIds": "us-east-1",
+      "ResourceGroupName": "PatchingGroup",
+      "TargetLocationMaxConcurrency": "10",
+      "ReportS3Bucket": "patchingdereban",
+      "LambdaRoleName": "arn:aws:iam::007695491693:role/Lambda-SSM-RunMultiAccountsPatchingRole"
+    }
+  }
+  
