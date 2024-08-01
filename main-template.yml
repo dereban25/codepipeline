@@ -277,6 +277,7 @@ Resources:
       PipelineType: V2
       RestartExecutionOnUpdate: true
       Stages:
+        # Fetch source code from GitHub
         - Name: FetchSource
           Actions:
             - Name: SourceAction
@@ -293,6 +294,7 @@ Resources:
               RunOrder: 1
               OutputArtifacts:
                 - Name: SourceArtifact
+        # Upload zip archives to S3
         - Name: ExtractArtifactsToS3
           Actions:
             - Name: BuildAction
@@ -308,6 +310,7 @@ Resources:
               OutputArtifacts:
                 - Name: BuildArtifact
               RunOrder: 1
+        # Deploy SNS Topic and configure Subscription
         - Name: DeploySNSTopic
           Actions:
             - Name: DeployAction
@@ -328,6 +331,7 @@ Resources:
               RunOrder: 1
               OutputArtifacts:
                 - Name: SNSOutput
+        #   # Deploy SSM custom document for automating patching across instances, including on-premises environments
         - Name: DeploySSMDocument
           Actions:
             - Name: DeployAction
@@ -345,6 +349,7 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateSSMDocument}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
               RunOrder: 1
+        # Deploy Lambda function for snapshot deletion
         - Name: DeployLambdaDeleteSnapshot
           Actions:
             - Name: DeployAction
@@ -363,13 +368,14 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateLambdaDeleteSnapshot}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaDeleteSnapshot}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides: !Sub |
+                ParameterOverrides: |
                   {
-                    "S3Bucket": "${PipelineBucket}",
+                    "S3Bucket": !Sub "${PipelineBucket}",
                     "S3Key": "${basename ${LambdaCodeDeleteSnapshot}}",
                     "SnsTopicArn": {"Fn::GetArtifactAtt" : ["SNSOutput", "SnsTopicArn"]}
                   }
               RunOrder: 1
+        # Deploy Lambda function for multi-account patching
         - Name: DeployLambdaRunMultiAccountsPatching
           Actions:
             - Name: DeployAction
