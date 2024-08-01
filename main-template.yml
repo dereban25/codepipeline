@@ -245,33 +245,33 @@ Resources:
               - logs:PutLogEvents
             Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*'
 
-  # CodeBuild definition
-  TemplateValidationAndArtifactUploadProject:
-      Type: AWS::CodeBuild::Project
-      Properties:
-        Name: !Ref CodeBuildProjectName
-        Source:
-          Type: CODEPIPELINE
-          BuildSpec: 'buildspec.yml'
-        Artifacts:
-          Type: CODEPIPELINE
-        Environment:
-          ComputeType: BUILD_GENERAL1_SMALL
-          Image: aws/codebuild/standard:5.0
-          Type: LINUX_CONTAINER
-          EnvironmentVariables:
-            - Name: PIPELINE_BUCKET
-              Type: PLAINTEXT
-              Value: !Ref PipelineBucket
-            - Name: LAMBDA_CODE_DELETE_SNAPSHOT
-              Type: PLAINTEXT
-              Value: !Ref LambdaCodeDeleteSnapshot
-            - Name: LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING
-              Type: PLAINTEXT
-              Value: !Ref LambdaCodeRunMultiAccountsPatching
-        ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
-        TimeoutInMinutes: 5
-        Description: "CodeBuild project for the Patching pipeline"
+  # # CodeBuild definition
+  # TemplateValidationAndArtifactUploadProject:
+  #     Type: AWS::CodeBuild::Project
+  #     Properties:
+  #       Name: !Ref CodeBuildProjectName
+  #       Source:
+  #         Type: CODEPIPELINE
+  #         BuildSpec: 'buildspec.yml'
+  #       Artifacts:
+  #         Type: CODEPIPELINE
+  #       Environment:
+  #         ComputeType: BUILD_GENERAL1_SMALL
+  #         Image: aws/codebuild/standard:5.0
+  #         Type: LINUX_CONTAINER
+  #         EnvironmentVariables:
+  #           - Name: PIPELINE_BUCKET
+  #             Type: PLAINTEXT
+  #             Value: !Ref PipelineBucket
+  #           - Name: LAMBDA_CODE_DELETE_SNAPSHOT
+  #             Type: PLAINTEXT
+  #             Value: !Ref LambdaCodeDeleteSnapshot
+  #           - Name: LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING
+  #             Type: PLAINTEXT
+  #             Value: !Ref LambdaCodeRunMultiAccountsPatching
+  #       ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
+  #       TimeoutInMinutes: 5
+  #       Description: "CodeBuild project for the Patching pipeline"
 
   # CodePipeline definition
   CodePipeline:
@@ -302,22 +302,22 @@ Resources:
               RunOrder: 1
               OutputArtifacts:
                 - Name: SourceArtifact
-        # Upload zip archives to S3
-        - Name: ExtractArtifactsToS3
-          Actions:
-            - Name: BuildAction
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Provider: CodeBuild
-                Version: '1'
-              Configuration:
-                ProjectName: !Ref CodeBuildProjectName
-              InputArtifacts:
-                - Name: SourceArtifact
-              # OutputArtifacts:
-              #   - Name: BuildArtifact
-              RunOrder: 1
+        # # Upload zip archives to S3
+        # - Name: ExtractArtifactsToS3
+        #   Actions:
+        #     - Name: BuildAction
+        #       ActionTypeId:
+        #         Category: Build
+        #         Owner: AWS
+        #         Provider: CodeBuild
+        #         Version: '1'
+        #       Configuration:
+        #         ProjectName: !Ref CodeBuildProjectName
+        #       InputArtifacts:
+        #         - Name: SourceArtifact
+        #       # OutputArtifacts:
+        #       #   - Name: BuildArtifact
+        #       RunOrder: 1
         # Deploy SNS Topic and configure Subscription
         - Name: DeploySNSTopic
           Actions:
