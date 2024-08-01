@@ -377,10 +377,10 @@ Resources:
                 TemplatePath: !Sub SourceArtifact::${TemplateLambdaDeleteSnapshot}
                 TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaDeleteSnapshot}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides: !Sub |
+                ParameterOverrides: |
                   {
                     "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                    "S3Key" : ${LambdaCodeDeleteSnapshot},
+                    "S3Key" : {"Fn::Sub": "${LambdaCodeDeleteSnapshot}"},
                     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
               RunOrder: 4
@@ -406,8 +406,8 @@ Resources:
                 ParameterOverrides: |
                   {
                     "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                    "S3Key" : { "Fn::Sub" : ["LambdaCodeRunMultiAccountsPatching"]},
+                    "S3Key" : {"Fn::Sub": "${LambdaCodeRunMultiAccountsPatching}"},
                     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
               RunOrder: 4
-      ExecutionMode: PARALLEL
+      ExecutionMode: QUEUED
