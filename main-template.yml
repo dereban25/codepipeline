@@ -315,8 +315,8 @@ Resources:
                 ProjectName: !Ref CodeBuildProjectName
               InputArtifacts:
                 - Name: SourceArtifact
-              OutputArtifacts:
-                - Name: BuildArtifact
+              # OutputArtifacts:
+              #   - Name: BuildArtifact
               RunOrder: 1
         # Deploy SNS Topic and configure Subscription
         - Name: DeploySNSTopic
