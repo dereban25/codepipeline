@@ -20,10 +20,10 @@ Parameters:
     Default: 'patching'
 
   # Templates
-  # TemplateSNSTopic: 
-  #   Type: String
-  #   Description: '(Required) CloudFormation template for creating SNS Topic'
-  #   Default: 'templates/sns-topic.yml'
+  TemplateSNSTopic: 
+    Type: String
+    Description: '(Required) CloudFormation template for creating SNS Topic'
+    Default: 'templates/sns-topic.yml'
   TemplateSSMDocument: 
     Type: String
     Description: '(Required) CloudFormation template for creating SSM Document'
@@ -38,10 +38,10 @@ Parameters:
   #   Default: 'templates/lambda-run-multi-accounts-patching.yml'
 
   # Parameters
-  # ParametersSNSTopic: 
-  #   Type: String
-  #   Description: '(Required) JSON file with parameters for the SNS topic'
-  #   Default: 'parameters/sns-topic-parameters.json'
+  ParametersSNSTopic: 
+    Type: String
+    Description: '(Required) JSON file with parameters for the SNS topic'
+    Default: 'parameters/sns-topic-parameters.json'
   # ParametersLambdaDeleteSnapshot: 
   #   Type: String
   #   Description: '(Required) JSON file with parameters for the Lambda function to delete snapshots'
