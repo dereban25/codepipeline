@@ -10,4 +10,4 @@ jobs:
       - name: Linter install
         uses: scottbrenner/cfn-lint-action@v2
         with:
-            command: cfn-lint -t ./cfn-template.yml
+            command: cfn-lint -t ./main-template.yml
