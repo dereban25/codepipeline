@@ -20,52 +20,52 @@ Parameters:
     Default: 'patching'
 
   # Templates
-  TemplateSNSTopic: 
-    Type: String
-    Description: '(Required) CloudFormation template for creating SNS Topic'
-    Default: 'templates/sns-topic.yml'
+  # TemplateSNSTopic: 
+  #   Type: String
+  #   Description: '(Required) CloudFormation template for creating SNS Topic'
+  #   Default: 'templates/sns-topic.yml'
   TemplateSSMDocument: 
     Type: String
     Description: '(Required) CloudFormation template for creating SSM Document'
     Default: 'templates/ssm-document.yml'
-  TemplateLambdaDeleteSnapshot: 
-    Type: String
-    Description: '(Required) CloudFormation template for the Lambda function to delete snapshots'
-    Default: 'templates/lambda-delete-snapshot.yml'
-  TemplateLambdaRunMultiAccountsPatching: 
-    Type: String
-    Description: '(Required) CloudFormation template for the Lambda function to run multi-accounts patching'
-    Default: 'templates/lambda-run-multi-accounts-patching.yml'
+  # TemplateLambdaDeleteSnapshot: 
+  #   Type: String
+  #   Description: '(Required) CloudFormation template for the Lambda function to delete snapshots'
+  #   Default: 'templates/lambda-delete-snapshot.yml'
+  # TemplateLambdaRunMultiAccountsPatching: 
+  #   Type: String
+  #   Description: '(Required) CloudFormation template for the Lambda function to run multi-accounts patching'
+  #   Default: 'templates/lambda-run-multi-accounts-patching.yml'
 
   # Parameters
-  ParametersSNSTopic: 
-    Type: String
-    Description: '(Required) JSON file with parameters for the SNS topic'
-    Default: 'parameters/sns-topic-parameters.json'
-  ParametersLambdaDeleteSnapshot: 
-    Type: String
-    Description: '(Required) JSON file with parameters for the Lambda function to delete snapshots'
-    Default: 'parameters/lambda-delete-snapshot-parameters.json'
-  ParametersLambdaRunMultiAccountsPatching: 
-    Type: String
-    Description: '(Required) JSON file with parameters for the Lambda function to run lambda for multi accounts patching'
-    Default: 'parameters/lambda-run-multi-accounts-patching.json'
+  # ParametersSNSTopic: 
+  #   Type: String
+  #   Description: '(Required) JSON file with parameters for the SNS topic'
+  #   Default: 'parameters/sns-topic-parameters.json'
+  # ParametersLambdaDeleteSnapshot: 
+  #   Type: String
+  #   Description: '(Required) JSON file with parameters for the Lambda function to delete snapshots'
+  #   Default: 'parameters/lambda-delete-snapshot-parameters.json'
+  # ParametersLambdaRunMultiAccountsPatching: 
+  #   Type: String
+  #   Description: '(Required) JSON file with parameters for the Lambda function to run lambda for multi accounts patching'
+  #   Default: 'parameters/lambda-run-multi-accounts-patching.json'
 
  # Lambda Code
-  LambdaCodeDeleteSnapshot:
-    Type: String
-    Description: '(Required) Path to the Lambda code for deleting snapshots'
-    Default: 'lambda_code/delete-snapshot.zip'
-  LambdaCodeRunMultiAccountsPatching:
-    Type: String
-    Description: '(Required) Path to the Lambda code for running multi-accounts patching'
-    Default: 'lambda_code/run-multi-accounts-patching.zip'
+  # LambdaCodeDeleteSnapshot:
+  #   Type: String
+  #   Description: '(Required) Path to the Lambda code for deleting snapshots'
+  #   Default: 'lambda_code/delete-snapshot.zip'
+  # LambdaCodeRunMultiAccountsPatching:
+  #   Type: String
+  #   Description: '(Required) Path to the Lambda code for running multi-accounts patching'
+  #   Default: 'lambda_code/run-multi-accounts-patching.zip'
 
   # CodeBuild Project Name
-  CodeBuildProjectName:
-    Type: String
-    Description: '(Optional) Name of the CodeBuild project'
-    Default: 'TemplateValidationAndArtifactUpload'
+  # CodeBuildProjectName:
+  #   Type: String
+  #   Description: '(Optional) Name of the CodeBuild project'
+  #   Default: 'TemplateValidationAndArtifactUpload'
 
 Resources:
   # S3 bucket for storing pipeline artifacts
