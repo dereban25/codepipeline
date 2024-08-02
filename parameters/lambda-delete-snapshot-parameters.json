@@ -7,7 +7,7 @@
       "RoleName": "AWS-SystemsManager-AutomationExecutionRole",
       "TagKey": "Patching",
       "TagValue": "DeleteAllow",
-      "LambdaRoleName": "arn:aws:iam::007695491693:role/Lambda-DeleteSnapshot",
+      "LambdaRoleName": "LambdaDeleteSnapshotRole",
       "LambdaFunctionName": "LambdaDeleteSnapshot"
     }
   }

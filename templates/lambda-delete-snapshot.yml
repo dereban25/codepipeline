@@ -48,8 +48,8 @@ Parameters:
 
   LambdaRoleName:
     Type: String
-    Default: arn:aws:iam::007695491693:role/Lambda-DeleteSnapshot
-    Description: Existing IAM role ARN for Lambda function
+    Default: LambdaDeleteSnapshotRole
+    Description: Lambda Role name
 
   LambdaFunctionName:
     Type: String
@@ -60,7 +60,7 @@ Resources:
   LambdaDeleteSnapshotRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: LambdaDeleteSnapshotRole
+      RoleName: !Ref LambdaRoleName
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -136,4 +136,4 @@ Resources:
             Schedule: cron(0 0 ? * * *)
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto
-      Role: !Ref LambdaRoleName
+      Role: !Ref LambdaDeleteSnapshotRole
