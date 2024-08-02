@@ -28,21 +28,16 @@ phases:
       - echo "Zipping lambda code for Delete Snapshot..."
       - LAMBDA_DIR_DELETE_SNAPSHOT="$LAMBDA_CODE_DELETE_SNAPSHOT"
       - ZIP_FILE_NAME_DELETE_SNAPSHOT="$(basename $LAMBDA_DIR_DELETE_SNAPSHOT).zip"
-      - echo "extracted-artifacts/$LAMBDA_DIR_DELETE_SNAPSHOT"
-      - pwd
       - cd $LAMBDA_DIR_DELETE_SNAPSHOT || { echo "Failed to change directory to $LAMBDA_DIR_DELETE_SNAPSHOT"; exit 1; }
       - zip -r ../$ZIP_FILE_NAME_DELETE_SNAPSHOT . || { echo "Zipping Delete Snapshot failed"; exit 1; }
-      - cd - || { echo "Failed to return to previous directory"; exit 1; }
-      - pwd
+
 
       - echo "Zipping lambda code for Run Multi Accounts Patching..."
       - LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING="$LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING"
       - ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING="$(basename $LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING).zip"
       - echo "extracted-artifacts/$LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING"
-      - pwd
       - cd $LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING || { echo "Failed to change directory to $LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING"; exit 1; }
       - zip -r ../$ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING . || { echo "Zipping Run Multi Accounts Patching failed"; exit 1; }
-      - cd - || { echo "Failed to return to previous directory"; exit 1; }
 
       - DIR_LAMBDA_CODE_DELETE_SNAPSHOT="${LAMBDA_CODE_DELETE_SNAPSHOT%%/*}"
       - echo "Copying $ZIP_FILE_NAME_DELETE_SNAPSHOT to the target S3 bucket..."
