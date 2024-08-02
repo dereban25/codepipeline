@@ -39,12 +39,10 @@ Parameters:
   TagKey:
     Type: String
     Description: Tag key for filtering
-    Default: Patching
 
   TagValue:
     Type: String
     Description: Tag value for filtering
-    Default: DeleteAllow
 
   LambdaRoleName:
     Type: String
