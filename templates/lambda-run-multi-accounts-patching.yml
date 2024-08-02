@@ -98,8 +98,3 @@ Resources:
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto
       Role: !Ref LambdaRoleName
-
-Outputs:
-  LambdaFunctionArn:
-    Description: The ARN of the Lambda function
-    Value: !GetAtt RunMultiAccountsPatching.Arn

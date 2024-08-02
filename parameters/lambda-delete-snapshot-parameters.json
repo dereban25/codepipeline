@@ -4,7 +4,7 @@
       "ExceptionAccountIds": "",
       "ExceptMasterAccount": "False",
       "RegionsToProcess": "us-east-1",
-      "RoleName": "AWS-SystemsManager-AutomationExecutionRole",
+      "ExecutionRoleName": "AWS-SystemsManager-AutomationExecutionRole",
       "TagKey": "Patching",
       "TagValue": "DeleteAllow",
       "LambdaRoleName": "LambdaDeleteSnapshotRole",
