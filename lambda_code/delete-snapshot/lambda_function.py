@@ -1,7 +1,4 @@
-import boto3
-from datetime import datetime, timedelta, timezone
-
-from env_vars import role_name, regions_to_process, sns_topic_arn
+from env_vars import regions_to_process
 from ec2_client import get_ec2_client
 from delete_snapshot import delete_snapshot
 from fetch_target_org_accounts import get_target_accounts_ids
