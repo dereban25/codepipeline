@@ -30,7 +30,7 @@ phases:
       - ZIP_FILE_NAME_DELETE_SNAPSHOT="$(basename $LAMBDA_DIR_DELETE_SNAPSHOT).zip"
       - echo "extracted-artifacts/$LAMBDA_DIR_DELETE_SNAPSHOT"
       - pwd
-      - cd extracted-artifacts/$LAMBDA_DIR_DELETE_SNAPSHOT && zip -r ../$ZIP_FILE_NAME_DELETE_SNAPSHOT . && cd ../..
+      - cd extracted-artifacts/$LAMBDA_DIR_DELETE_SNAPSHOT && zip -r ../$ZIP_FILE_NAME_DELETE_SNAPSHOT . && cd ..
       - pwd
 
       - echo "Zipping lambda code for Run Multi Accounts Patching..."
