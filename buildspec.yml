@@ -44,6 +44,7 @@ phases:
       - zip -r ../$ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING . || { echo "Zipping Run Multi Accounts Patching failed"; exit 1; }
       - cd - || { echo "Failed to return to previous directory"; exit 1; }
       - pwd
+      - ls -la
 
       - echo "Copying $ZIP_FILE_NAME_DELETE_SNAPSHOT to the target S3 bucket..."
       - aws s3 cp --force extracted-artifacts/$ZIP_FILE_NAME_DELETE_SNAPSHOT s3://$PIPELINE_BUCKET/$ZIP_FILE_NAME_DELETE_SNAPSHOT
