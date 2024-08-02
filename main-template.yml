@@ -115,7 +115,7 @@ Resources:
             Resource: 
               - !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
               - '*'
-          - Sid: 'IAM passrole'
+          - Sid: 'IAMPassRole'
             Effect: Allow
             Action:
               - iam:PassRole
