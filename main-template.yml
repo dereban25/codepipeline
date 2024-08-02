@@ -351,12 +351,17 @@ Resources:
                 Version: '1'
               InputArtifacts:
                 - Name: SourceArtifact
+                - Name: SNSOutput
               Configuration:
                 ActionMode: CREATE_UPDATE
                 StackName: !Ref StackName
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: !Sub SourceArtifact::${TemplateSSMDocument}
                 RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+                ParameterOverrides: |
+                  {
+                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                  }
               RunOrder: 3
         # Deploy Lambda function for multi-account patching
         - Name: DeployLambdaRunMultiAccountsPatching
