@@ -31,7 +31,6 @@ Parameters:
   RoleName:
     Type: String
     Description: Role name for automation execution
-    Default: AWS-SystemsManager-AutomationExecutionRole
 
   SnsTopicArn:
     Type: String
@@ -58,6 +57,52 @@ Parameters:
     Description: Lambda function name
 
 Resources:
+  LambdaDeleteSnapshotRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: LambdaDeleteSnapshotRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+  LambdaDeleteSnapshotRoleInlinePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: LambdaDeleteSnapshotRoleInlinePolicy
+      Roles:
+        - Ref: LambdaDeleteSnapshotRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - kms:Decrypt
+              - kms:RetireGrant
+            Resource: 
+              - '*'
+          - Effect: Allow
+            Action:
+              - logs:CreateLogStream
+            Resource:
+              - '*'
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Resource: !Sub 'arn:aws:iam::*:role/${RoleName}'
+          - Effect: Allow
+            Action:
+              - organizations:ListAccounts
+              - organizations:DescribeOrganization
+            Resource: 
+              - '*'
+          - Effect: Allow
+            Action:
+              - sns:Publish
+            Resource: !Ref SnsTopicArn
   DeleteSnapshot:
     Type: AWS::Serverless::Function
     Properties:

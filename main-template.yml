@@ -145,7 +145,7 @@ Resources:
               - ssm:GetDocument
               - ssm:ListTagsForResource
             Resource: 
-              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:document/PatchInstanceWithRollbackKeepSnapshot1'
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:document/PatchInstanceWith-Rollback-OnPrem-KeepSnapshot'
           - Sid: 'Lambda'
             Effect: Allow
             Action:
@@ -363,32 +363,6 @@ Resources:
                     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
               RunOrder: 3
-        # Deploy Lambda function for multi-account patching
-        - Name: DeployLambdaRunMultiAccountsPatching
-          Actions:
-            - Name: DeployAction
-              ActionTypeId:
-                Category: Deploy
-                Owner: AWS
-                Provider: CloudFormation
-                Version: '1'
-              InputArtifacts:
-                - Name: SourceArtifact
-                - Name: SNSOutput
-              Configuration:
-                ActionMode: CREATE_UPDATE
-                StackName: !Ref StackName
-                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-                TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatching}
-                TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaRunMultiAccountsPatching}
-                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides: |
-                  {
-                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                    "S3Key" : "lambda_code/run-multi-accounts-patching.zip"},
-                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
-                  }
-              RunOrder: 4
         # Deploy Lambda function for snapshot deletion
         - Name: DeployLambdaDeleteSnapshot
           Actions:
@@ -412,6 +386,32 @@ Resources:
                   {
                     "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
                     "S3Key" : "lambda_code/delete-snapshot.zip",
+                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                  }
+              RunOrder: 4
+        # Deploy Lambda function for multi-account patching
+        - Name: DeployLambdaRunMultiAccountsPatching
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: '1'
+              InputArtifacts:
+                - Name: SourceArtifact
+                - Name: SNSOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Ref StackName
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatching}
+                TemplateConfiguration: !Sub SourceArtifact::${ParametersLambdaRunMultiAccountsPatching}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+                ParameterOverrides: |
+                  {
+                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                    "S3Key" : "lambda_code/run-multi-accounts-patching.zip"},
                     "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
                   }
               RunOrder: 4
