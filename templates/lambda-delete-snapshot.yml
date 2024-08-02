@@ -136,4 +136,4 @@ Resources:
             Schedule: cron(0 0 ? * * *)
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto
-      Role: !GetAtt LambdaDeleteSnapshotRole
+      Role: !GetAtt LambdaDeleteSnapshotRole.Arn
