@@ -43,9 +43,6 @@ phases:
       - cd $LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING || { echo "Failed to change directory to $LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING"; exit 1; }
       - zip -r ../$ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING . || { echo "Zipping Run Multi Accounts Patching failed"; exit 1; }
       - cd - || { echo "Failed to return to previous directory"; exit 1; }
-      - pwd
-      - cd lambda_code
-      - ls -la
 
       - DIR_LAMBDA_CODE_DELETE_SNAPSHOT="${LAMBDA_CODE_DELETE_SNAPSHOT%%/*}"
       - echo "Copying $ZIP_FILE_NAME_DELETE_SNAPSHOT to the target S3 bucket..."
