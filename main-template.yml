@@ -55,11 +55,11 @@ Parameters:
   LambdaCodeDeleteSnapshot:
     Type: String
     Description: '(Required) Path to the Lambda code for deleting snapshots'
-    Default: 'lambda_code/delete-snapshot.zip'
+    Default: 'lambda_code/delete-snapshot'
   LambdaCodeRunMultiAccountsPatching:
     Type: String
     Description: '(Required) Path to the Lambda code for running multi-accounts patching'
-    Default: 'lambda_code/run-multi-accounts-patching.zip'
+    Default: 'lambda_code/run-multi-accounts-patching'
 
   # CodeBuild Project Name
   CodeBuildProjectName:

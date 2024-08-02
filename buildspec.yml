@@ -25,16 +25,26 @@ phases:
       - FILE_NAME=$(basename $LATEST_ARTIFACT)
       - unzip $FILE_NAME -d extracted-artifacts || echo "Unzip failed"
 
-      - echo "Copying $(basename $LAMBDA_CODE_DELETE_SNAPSHOT) to the target S3 bucket..."
-      - aws s3 cp --force extracted-artifacts/$LAMBDA_CODE_DELETE_SNAPSHOT s3://$PIPELINE_BUCKET/$LAMBDA_CODE_DELETE_SNAPSHOT
+      - echo "Zipping lambda code for Delete Snapshot..."
+      - LAMBDA_DIR_DELETE_SNAPSHOT="$LAMBDA_CODE_DELETE_SNAPSHOT"
+      - ZIP_FILE_NAME_DELETE_SNAPSHOT="$(basename $LAMBDA_DIR_DELETE_SNAPSHOT).zip"
+      - cd extracted-artifacts/$LAMBDA_DIR_DELETE_SNAPSHOT && zip -r ../$ZIP_FILE_NAME_DELETE_SNAPSHOT . && cd ../..
 
-      - echo "Copying $(basename $LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING) to the target S3 bucket..."
-      - aws s3 cp --force extracted-artifacts/$LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING s3://$PIPELINE_BUCKET/$LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING
+      - echo "Zipping lambda code for Run Multi Accounts Patching..."
+      - LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING="$LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING"
+      - ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING="$(basename $LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING).zip"
+      - cd extracted-artifacts/$LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING && zip -r ../$ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING . && cd ../..
+
+      - echo "Copying $ZIP_FILE_NAME_DELETE_SNAPSHOT to the target S3 bucket..."
+      - aws s3 cp --force extracted-artifacts/$ZIP_FILE_NAME_DELETE_SNAPSHOT s3://$PIPELINE_BUCKET/$ZIP_FILE_NAME_DELETE_SNAPSHOT
+
+      - echo "Copying $ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING to the target S3 bucket..."
+      - aws s3 cp --force extracted-artifacts/$ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING s3://$PIPELINE_BUCKET/$ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING
 
   post_build:
     commands:
       - echo Cleaning up temporary files...
-      - rm -rf extracted-artifacts $LATEST_ARTIFACT delete-snapshot.zip run-multi-accounts-patching.zip
+      - rm -rf extracted-artifacts $LATEST_ARTIFACT $ZIP_FILE_NAME_DELETE_SNAPSHOT $ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING
 
 artifacts:
   files:
