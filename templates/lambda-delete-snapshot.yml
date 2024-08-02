@@ -90,7 +90,7 @@ Resources:
           - Effect: Allow
             Action:
               - sts:AssumeRole
-            Resource: !Sub 'arn:aws:iam::*:role/${RoleName}'
+            Resource: !Sub 'arn:aws:iam::*:role/${ExecutionRoleName}'
           - Effect: Allow
             Action:
               - organizations:ListAccounts
