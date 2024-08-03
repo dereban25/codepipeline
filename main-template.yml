@@ -136,6 +136,7 @@ Resources:
         Statement:
           'Fn::ForEach::Iterator':
             - TargetAccountId #Identifier
+            - !Ref TargetAccountList
             - 'Sid: AllowPutObjectFromTargetAccount${TargetAccountId}':
               Effect: Allow
               Principal:
