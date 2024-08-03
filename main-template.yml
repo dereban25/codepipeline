@@ -106,7 +106,6 @@ Conditions:
   IsTargetAccountPatchingExecutionPrerequisitesCondition: !Equals
     - !Ref DeployTargetAccountPatchingExecutionPrerequisites
     - 'Yes'
-    - 'No'
 
 Resources:
   # S3 bucket for storing pipeline artifacts
