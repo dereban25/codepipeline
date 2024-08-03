@@ -15,6 +15,7 @@
     "TemplateConfigurationTargetAccountPatchingExecutionPrerequisitesPath": "parameters/target-account-patching-execution-prerequisites.json",
     "LambdaCodeDeleteSnapshot": "lambda_code/delete-snapshot",
     "LambdaCodeRunMultiAccountsPatching": "lambda_code/run-multi-accounts-patching",
-    "CodeBuildProjectName": "TemplateValidationAndArtifactUpload"
+    "CodeBuildProjectName": "TemplateValidationAndArtifactUpload",
+    "DeployTargetAccountPatchingExecutionPrerequisites": "Yes"
   }
 }
