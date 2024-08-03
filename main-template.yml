@@ -138,10 +138,10 @@ Resources:
             Effect: Allow
             Principal:
               AWS: 
-                'Fn::ForEach::Iterator':
-                  - TargetAccountId #Identifier
-                  - !Ref TargetAccountList #Collection
-                  - !Sub 'arn:aws:iam::${TargetAccountId}:root'
+                Fn::Join:
+                  - ","
+                  - !ForEach [ !Ref TargetAccountList ]
+                    - !Sub "arn:aws:iam::${TargetAccountId}:root"
             Action: 
               - s3:PutObject
             Resource: 
