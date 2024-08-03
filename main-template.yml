@@ -178,14 +178,14 @@ Resources:
           - Sid: "IAM"
             Effect: Allow
             Action:
-              - "iam:DeleteRole"
-              - "iam:GetRole"
-              - "iam:GetRolePolicy"
-              - "iam:ListAttachedRolePolicies"
-              - "iam:ListRolePolicies"
-              - "iam:CreateRole"
-              - "iam:PutRolePolicy"
-              - "iam:DeleteRolePolicy"
+              - iam:DeleteRole
+              - iam:GetRole
+              - iam:GetRolePolicy
+              - iam:ListAttachedRolePolicies
+              - iam:ListRolePolicies
+              - iam:CreateRole
+              - iam:PutRolePolicy
+              - iam:DeleteRolePolicy
             Resource:
               - "*"
           - Sid: "CloudFormation"
@@ -384,8 +384,6 @@ Resources:
                 ProjectName: !Ref CodeBuildProjectName
               InputArtifacts:
                 - Name: SourceArtifact
-              # OutputArtifacts:
-              #   - Name: BuildArtifact
               RunOrder: 2
         # Deploy SNS Topic and configure Subscription
         - Name: DeploySNSTopic
