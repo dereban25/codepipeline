@@ -141,7 +141,7 @@ Resources:
                 'Fn::ForEach::TargetAccountsIds':
                   - TargetAccountId
                   - !Ref TargetAccountList
-                  - !Join ['', ['arn:aws:iam::', !Ref VPCTargetAccountIdID]]
+                  - !Join ['', ['arn:aws:iam::', !Ref TargetAccountId, ':root']]
 
             Action: 
               - s3:PutObject
