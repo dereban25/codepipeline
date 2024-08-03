@@ -15,7 +15,6 @@ Parameters:
     Type: CommaDelimitedList
     Description: List of AWS target account IDs
 
-
 Resources:
   AWSSystemsManagerAutomationAdministrationRole:
     Type: 'AWS::IAM::Role'

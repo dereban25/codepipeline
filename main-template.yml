@@ -137,8 +137,10 @@ Resources:
             Effect: Allow
             Principal:
               AWS: 
-                !ForEach AccountId in !Ref TargetAccountList
-                  - !Sub 'arn:aws:iam::${AccountId}:root'
+                'Fn::ForEach::TargetAccountsIds':
+                  - TargetAccountId
+                  - !Ref TargetAccountList
+                  - !Sub 'arn:aws:iam::${TargetAccountId}:root'
             Action: 
               - s3:PutObject
             Resource: 
