@@ -1,3 +1,46 @@
+# This AWS Serverless Application Model (SAM) template provisions a Lambda function
+# designed for performing patching operations across multiple AWS accounts.
+# The template includes the creation of an IAM role, associated policies, and the Lambda function itself.
+# 
+# **Parameters:**
+# - **LambdaFunctionName**: The name to be assigned to the Lambda function (default: LambdaRunMultiAccountsPatching).
+# - **S3Bucket**: The S3 bucket where the Lambda function's ZIP file is stored.
+# - **S3Key**: The S3 key for the Lambda function's ZIP file.
+# - **AutomationAssumeRole**: IAM role for automation execution.
+# - **TargetLocationMaxErrors**: Maximum number of errors allowed in the target location during execution.
+# - **SnsTopicArn**: ARN of the SNS topic for sending notifications.
+# - **ExecutionRoleName**: Role name used for executing the patching operations.
+# - **DocumentName**: Name of the SSM Document to be used for patching.
+# - **ExceptMasterAccount**: Flag to indicate whether to exclude the master account (True or False).
+# - **ExceptionAccountIds**: Comma-separated list of account IDs to be excluded from patching.
+# - **TargetRegionIds**: Comma-separated list of region IDs where the patching should be performed.
+# - **ResourceGroupName**: Name of the resource group to be targeted for patching.
+# - **TargetLocationMaxConcurrency**: Maximum concurrency for operations in the target location.
+# - **LambdaRoleName**: Name of the existing IAM role to be used by the Lambda function (default: LambdaRunMultiAccountsPatchingRole).
+# 
+# **Resources:**
+# - **LambdaRunMultiAccountsPatchingRole**: IAM role for the Lambda function with permissions for:
+#   - Decrypting KMS keys.
+#   - Creating CloudWatch log streams and log groups.
+#   - Listing AWS accounts and describing the AWS Organization.
+#   - Publishing notifications to the specified SNS topic.
+#   - Starting automation executions using the specified SSM document.
+#   - Passing the IAM role required for SSM automation.
+# - **LambdaRunMultiAccountsPatchingRoleInlinePolicy**: Inline policy attached to the Lambda role that provides the permissions required for the above actions.
+# - **RunMultiAccountsPatching**: Lambda function resource configured with:
+#   - Function code stored in the specified S3 bucket and key.
+#   - Environment variables for configuration settings.
+#   - Event invoke configuration specifying maximum event age and retry attempts.
+#   - SnapStart disabled.
+#   - Auto-update runtime configuration.
+#   - The IAM role assigned to the Lambda function.
+# 
+# This template ensures that the Lambda function is properly configured with the necessary permissions and settings
+# to execute patching operations across multiple accounts and regions as specified.
+#
+# **Outputs:**
+# - **LambdaRunMultiAccountsPatchingRole**: ARN of the Lambda execution role for use in other stacks or configurations.
+
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Template to create a Lambda function for multi-account patching
@@ -6,6 +49,7 @@ Parameters:
 
   LambdaFunctionName:
     Type: String
+    Default: LambdaRunMultiAccountsPatching
     Description: Lambda Name
 
   S3Bucket:
@@ -58,9 +102,72 @@ Parameters:
 
   LambdaRoleName:
     Type: String
+    Default: LambdaRunMultiAccountsPatchingRole
     Description: Existing IAM role name for Lambda function
 
 Resources:
+
+  LambdaRunMultiAccountsPatchingRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref LambdaRoleName
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+  LambdaRunMultiAccountsPatchingRoleInlinePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: LambdaRunMultiAccountsPatchingRoleInlinePolicy
+      Roles:
+        - Ref: LambdaRunMultiAccountsPatchingRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: 'KMS'
+            Effect: Allow
+            Action:
+              - kms:Decrypt
+              - kms:RetireGrant
+            Resource: 
+              - '*'
+          - Sid: 'CloudWatchLogs'
+            Effect: Allow
+            Action:
+              - logs:CreateLogStream
+              - logs:CreateLogGroup
+            Resource:
+              - '*'
+          - Sid: Organization
+            Effect: Allow
+            Action:
+              - organizations:ListAccounts
+              - organizations:DescribeOrganization
+            Resource: 
+              - '*'
+          - Sid: 'SNS'
+            Effect: Allow
+            Action:
+              - sns:Publish
+            Resource: !Ref SnsTopicArn
+          - Sid: 'SSM'
+            Effect: Allow
+            Action:
+              - ssm:StartAutomationExecution
+            Resource: 
+              - arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:document/PatchInstanceWithRollbackKeepSnapshot
+              - arn:aws:ssm:*:*:automation-definition/*:$DEFAULT
+          - Sid: 'IAM'
+            Effect: Allow
+            Action:
+              - iam:PassRole
+            Resource:
+              - arn:aws:iam::${AWS::AccountId}:role/AWS-SystemsManager-AutomationAdministrationRole
+
   RunMultiAccountsPatching:
     Type: AWS::Serverless::Function
     Properties:
@@ -97,4 +204,10 @@ Resources:
         ApplyOn: None
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto
-      Role: !Ref LambdaRoleName
+      Role: !GetAtt LambdaRunMultiAccountsPatchingRole.Arn
+
+Outputs:
+  LambdaRunMultiAccountsPatchingRole:
+    Value: !Ref LambdaRunMultiAccountsPatchingRole
+    Export:
+      Name: LambdaRunMultiAccountsPatchingRole

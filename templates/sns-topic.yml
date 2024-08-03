@@ -1,3 +1,28 @@
+# This CloudFormation template provisions an SNS (Simple Notification Service) topic and subscribes an email address to it.
+# It defines parameters for the topic name, display name, and an email address for subscription. 
+# The resources include the SNS topic itself and a subscription to that topic.
+
+# **Parameters:**
+# - **SNSTopicName**: The name to be assigned to the SNS topic.
+# - **SNSDisplayName**: The display name for the SNS topic, which is shown in email notifications.
+# - **SNSEmail**: The email address that will be subscribed to the SNS topic.
+
+# **Resources:**
+# - **SNSTopic**: An SNS topic resource created with:
+#   - **TopicName**: Set to the value provided in the **SNSTopicName** parameter.
+#   - **DisplayName**: Set to the value provided in the **SNSDisplayName** parameter.
+# 
+# - **SNSSubscription**: A subscription resource that subscribes the provided email address to the SNS topic:
+#   - **Endpoint**: The email address to which notifications will be sent.
+#   - **Protocol**: Set to "email", indicating that email notifications will be used.
+#   - **TopicArn**: The ARN of the SNS topic, which is linked to the email subscription.
+
+# **Outputs:**
+# - **SnsTopicArn**: Exports the ARN (Amazon Resource Name) of the created SNS topic, allowing it to be referenced in other stacks or resources.
+
+# This template is useful for creating a notification system where an email address receives alerts from the SNS topic.
+
+
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   SNSTopicName:

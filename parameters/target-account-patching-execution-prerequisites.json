@@ -1,0 +1,9 @@
+{
+  "Parameters": {
+    "SSMInstanceProfileRole": "AWSEC2RoleforSSM",
+    "AutomationExecutionRole": "Custom-SystemsManager-AutomationExecutionRole",
+    "ResourceGroup": "PatchingGroup",
+    "TagKey": "Stage",
+    "TagValue": "ForPatching"
+  }
+}

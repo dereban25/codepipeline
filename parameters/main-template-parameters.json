@@ -1,15 +1,20 @@
 {
-    "Parameters": {
-      "StackName": "PatchingMultiAccountsWithOnPrem",
-      "CodestarConnection": "arn:aws:codestar-connections:us-east-1:007695491693:connection/b965019a-d6b5-4bfa-ab0b-2596e6996504",
-      "GitHubFullRepositoryId": "dereban25/codepipeline",
-      "GitHubBranchName": "patching",
-      "TemplateSNS": "templates/sns-topic.yml",
-      "TemplateDocument": "templates/ssm-document.yml",
-      "TemplateLambdaDeleteSnapshot": "templates/lambda-delete-snapshot.yml",
-      "TemplateLambdaRunMultiAccountsPatching": "templates/lambda-run-multi-accounts-patching.yml",
-      "ParametersSNS": "parameters/sns-topic-parameters.json",
-      "ParametersLambdaDeleteSnapshot": "parameters/lambda-delete-snapshot-parameters.json"
-    }
+  "Parameters": {
+    "StackName": "cp-PatchingMultiAccountsWithOnPrem",
+    "CodestarConnection": "arn:aws:codestar-connections:us-east-1:007695491693:connection/b965019a-d6b5-4bfa-ab0b-2596e6996504",
+    "GitHubFullRepositoryId": "dereban25/codepipeline",
+    "GitHubBranchName": "patching",
+    "TemplateSNSTopicPath": "templates/sns-topic.yml",
+    "TemplateSSMDocumentPath": "templates/ssm-document.yml",
+    "TemplateLambdaDeleteSnapshotPath": "templates/lambda-delete-snapshot.yml",
+    "TemplateLambdaRunMultiAccountsPatchingPath": "templates/lambda-run-multi-accounts-patching.yml",
+    "TemplateTargetAccountPatchingExecutionPrerequisitesPath": "templates/target-account-patching-execution-prerequisites.yml",
+    "TemplateConfigurationSNSTopicPath": "parameters/sns-topic-parameters.json",
+    "TemplateConfigurationLambdaDeleteSnapshotPath": "parameters/lambda-delete-snapshot-parameters.json",
+    "TemplateConfigurationLambdaRunMultiAccountsPatchingPath": "parameters/lambda-run-multi-accounts-patching-parameters.json",
+    "TemplateConfigurationTargetAccountPatchingExecutionPrerequisitesPath": "parameters/target-account-patching-execution-prerequisites.json",
+    "LambdaCodeDeleteSnapshot": "lambda_code/delete-snapshot",
+    "LambdaCodeRunMultiAccountsPatching": "lambda_code/run-multi-accounts-patching",
+    "CodeBuildProjectName": "TemplateValidationAndArtifactUpload"
   }
-  
+}

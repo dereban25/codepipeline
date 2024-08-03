@@ -1,8 +1,50 @@
+# This AWS Serverless Application Model (SAM) template defines a serverless application
+# that includes a Lambda function designed for deleting snapshots. The template handles
+# the creation of the necessary IAM role, Lambda function, and associated policies.
+# 
+# **Parameters:**
+# - **LambdaFunctionName**: Name for the Lambda function (default: LambdaDeleteSnapshot).
+# - **S3Bucket**: The S3 bucket where the Lambda function's ZIP file is stored.
+# - **S3Key**: The S3 key for the Lambda function's ZIP file.
+# - **Days**: Number of days to be processed by the Lambda function.
+# - **ExceptionAccountIds**: Comma-separated list of account IDs to be excluded.
+# - **ExceptMasterAccount**: Flag to exclude the master account (True or False).
+# - **RegionsToProcess**: Comma-separated list of regions to process.
+# - **ExecutionRoleName**: Name of the role used for automation execution.
+# - **SnsTopicArn**: ARN of the SNS topic used for notifications.
+# - **TagKey**: Tag key used for filtering resources.
+# - **TagValue**: Tag value used for filtering resources.
+# - **LambdaRoleName**: Name of the IAM role associated with the Lambda function (default: LambdaDeleteSnapshotRole).
+# 
+# **Resources:**
+# - **LambdaDeleteSnapshotRole**: IAM Role for the Lambda function with permissions for:
+#   - Decrypting KMS keys.
+#   - Creating log streams.
+#   - Assuming roles specified by the ExecutionRoleName.
+#   - Listing accounts and describing the AWS Organization.
+#   - Publishing to the specified SNS topic.
+# - **LambdaDeleteSnapshotRoleInlinePolicy**: Inline policy attached to the Lambda role with permissions
+#   for KMS, CloudWatch Logs, STS, Organizations, and SNS.
+# - **DeleteSnapshot**: Lambda function that handles snapshot deletions. It includes:
+#   - Function code stored in the specified S3 bucket and key.
+#   - Environment variables for various configuration options.
+#   - A scheduled event to trigger the function daily.
+#   - Runtime configuration set to auto-update.
+#   - The IAM role assigned to the Lambda function.
+# 
+# **Outputs:**
+# - **LambdaDeleteSnapshotRole**: Outputs the ARN of the Lambda execution role for use in other stacks or configurations.
+
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: An AWS Serverless Application Model template describing your Lambda function for snapshot deletion.
 
 Parameters:
+
+  LambdaFunctionName:
+    Type: String
+    Default: LambdaDeleteSnapshot
+    Description: Lambda function name
 
   S3Bucket:
     Type: String
@@ -48,11 +90,6 @@ Parameters:
     Type: String
     Default: LambdaDeleteSnapshotRole
     Description: Lambda Role name
-
-  LambdaFunctionName:
-    Type: String
-    Default: LambdaDeleteSnapshot
-    Description: Lambda function name
 
 Resources:
   LambdaDeleteSnapshotRole:
@@ -135,3 +172,9 @@ Resources:
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto
       Role: !GetAtt LambdaDeleteSnapshotRole.Arn
+
+Outputs:
+  LambdaDeleteSnapshotRole:
+    Value: !Ref LambdaDeleteSnapshotRole
+    Export:
+      Name: LambdaDeleteSnapshotRole
