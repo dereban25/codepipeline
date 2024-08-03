@@ -141,7 +141,7 @@ Resources:
                 'Fn::ForEach::TargetAccountsIds':
                   - TargetAccountId
                   - !Ref TargetAccountList
-                  - !Ref 'arn:aws:iam::${TargetAccountId}:root'
+                  - !Sub 'arn:aws:iam::${TargetAccountId}:root'
             Action: 
               - s3:PutObject
             Resource: 
