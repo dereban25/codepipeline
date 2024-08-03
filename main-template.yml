@@ -97,14 +97,16 @@ Parameters:
     Default: "TemplateValidationAndArtifactUpload"
 
   DeployTargetAccountPatchingExecutionPrerequisites:
-    Type: Boolean
+    Type: String
+    AllowedValues: ["Yes","No"]
     Description: "Deploy IAM roles and resources groups for patching execution in target accounts"
-    Default: true
+    Default: 'Yes'
 
 Conditions:
-  ShouldDeployTargetAccountPatchingExecutionPrerequisites: !Equals
+  IsTargetAccountPatchingExecutionPrerequisitesCondition: !Equals
     - !Ref DeployTargetAccountPatchingExecutionPrerequisites
-    - true
+    - 'Yes'
+    - 'No'
 
 Resources:
   # S3 bucket for storing pipeline artifacts
@@ -489,9 +491,9 @@ Resources:
               OutputArtifacts:
                 - Name: LambdaRunMultiAccountsPatchingOutput
         # If patching is not planned for the master account, this step can be skipped.
-        - 'Fn::If':
-          - ShouldDeployTargetAccountPatchingExecutionPrerequisites
-          # This action deploys the IAM roles and resource groups required for patching execution.
+        # This action deploys the IAM roles and resource groups required for patching execution.
+        - !If 
+          - IsTargetAccountPatchingExecutionPrerequisitesCondition
           - Name: DeployTargetAccountPatchingExecutionPrerequisites
             Actions:
               - Name: DeployAction
@@ -522,5 +524,5 @@ Resources:
                       "LambdaRunMultiAccountsPatchingRole" : {"Fn::GetParam": ["LambdaRunMultiAccountsPatchingOutput", "LambdaRunMultiAccountsPatchingOutput.json", "LambdaRunMultiAccountsPatchingRole"]},
                     }
                 RunOrder: 5
-          - !Ref "AWS::NoValue"
+          - !Ref AWS::NoValue
       ExecutionMode: QUEUED
