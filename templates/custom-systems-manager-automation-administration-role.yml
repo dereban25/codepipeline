@@ -11,8 +11,12 @@ Parameters:
     Description: Name for the IAM role for SSM Patching Automation
     Default: Custom-SystemsManager-AutomationExecutionRole
 
-Resources:
+  TargetAccountList:
+    Type: CommaDelimitedList
+    Description: List of AWS target account IDs
 
+
+Resources:
   AWSSystemsManagerAutomationAdministrationRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -23,8 +27,9 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS:
-                - AROAXYKJUKS7EMOMZ5OAQ
+              AWS: 
+                !ForEach AccountId in !Ref TargetAccountList
+                  - !Sub 'arn:aws:iam::${AccountId}:role/${AutomationExecutionRole}'
             Action: 'sts:AssumeRole'
           - Effect: Allow
             Principal:
