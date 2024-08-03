@@ -489,7 +489,7 @@ Resources:
               OutputArtifacts:
                 - Name: LambdaRunMultiAccountsPatchingOutput
         # If patching is not planned for the master account, this step can be skipped.
-        - !If
+        - 'Fn::If':
           - ShouldDeployTargetAccountPatchingExecutionPrerequisites
           # This action deploys the IAM roles and resource groups required for patching execution.
           - Name: DeployTargetAccountPatchingExecutionPrerequisites
