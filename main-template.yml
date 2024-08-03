@@ -138,7 +138,7 @@ Resources:
             Effect: Allow
             Principal:
               AWS: 
-                'Fn::ForEach::TargetAccountsIds':
+                'Fn::ForEach::Iterator':
                   - TargetAccountId
                   - !Ref TargetAccountList
                   # - !Join ['', ['arn:aws:iam::', !Ref TargetAccountId, ':root']]
