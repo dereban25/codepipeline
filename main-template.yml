@@ -18,6 +18,7 @@
 # The template uses parameters to define paths for CloudFormation templates, Lambda code locations, and other configuration details. It ensures all components are deployed and managed correctly within the pipeline.
 
 AWSTemplateFormatVersion: "2010-09-09"
+Transform: 'AWS::LanguageExtensions'
 Parameters:
   StackName:
     Type: String
