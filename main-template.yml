@@ -134,18 +134,17 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: AllowPutObjectFromTargetAccount
-            Effect: Allow
-            Principal:
-              AWS: 
-                Fn::Join:
-                  - ","
-                  - !ForEach [ !Ref TargetAccountList ]
-                    - !Sub "arn:aws:iam::${TargetAccountId}:root"
-            Action: 
-              - s3:PutObject
-            Resource: 
-              - !Sub 'arn:aws:s3:::${PipelineBucket}/*'
+          'Fn::ForEach::Iterator':
+            - TargetAccountId #Identifier
+            - 'Sid: AllowPutObjectFromTargetAccount${TargetAccountId}':
+              Effect: Allow
+              Principal:
+                AWS:
+                  - !Sub 'arn:aws:iam::${TargetAccountId}:root'
+              Action: 
+                - s3:PutObject
+              Resource: 
+                - !Sub 'arn:aws:s3:::${PipelineBucket}/*'
 
   # IAM Role for the deployment stage of the CodePipeline
   CodePipelineServiceDeployRole:
