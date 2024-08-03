@@ -512,7 +512,7 @@ Resources:
                   TemplatePath: !Sub SourceArtifact::${TemplateTargetAccountPatchingExecutionPrerequisitesPath}
                   TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationTargetAccountPatchingExecutionPrerequisitesPath}
                   RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                  ParameterOverrides: |
+                  ParameterOverrides: !Sub  |
                     {
                       "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
                       "MasterAccountNumber" : "${AWS::AccountId}",
