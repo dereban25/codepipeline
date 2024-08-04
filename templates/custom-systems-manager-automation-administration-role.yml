@@ -1,6 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
 
+  OrgId:
+    Type: String
+    Description: "The AWS Organization ID for the current AWS Organization."
+    
   AutomationAdministrationRole:
     Type: String
     Description: Name for the IAM role for SSM Patching Automation
@@ -10,10 +14,6 @@ Parameters:
     Type: String
     Description: Name for the IAM role for SSM Patching Automation
     Default: Custom-SystemsManager-AutomationExecutionRole
-
-  TargetAccountList:
-    Type: CommaDelimitedList
-    Description: List of AWS target account IDs
 
 Resources:
   AWSSystemsManagerAutomationAdministrationRole:
@@ -26,10 +26,11 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: 
-                !ForEach AccountId in !Ref TargetAccountList
-                  - !Sub 'arn:aws:iam::${AccountId}:role/${AutomationExecutionRole}'
+              AWS: '*'
             Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                aws:PrincipalOrgID: !Ref OrgId
           - Effect: Allow
             Principal:
               Service: 'ssm.amazonaws.com'

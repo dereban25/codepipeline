@@ -18,8 +18,14 @@
 # The template uses parameters to define paths for CloudFormation templates, Lambda code locations, and other configuration details. It ensures all components are deployed and managed correctly within the pipeline.
 
 AWSTemplateFormatVersion: "2010-09-09"
-Transform: 'AWS::LanguageExtensions'
+
+
 Parameters:
+
+  OrgId:
+    Type: String
+    Description: "The AWS Organization ID for the current AWS Organization."
+
   StackName:
     Type: String
     Description: (Optional) Specify Stack Name
@@ -103,10 +109,6 @@ Parameters:
     Description: "Deploy IAM roles and resources groups for patching execution in target accounts"
     Default: 'Yes'
 
-  TargetAccountList:
-    Type: CommaDelimitedList
-    Description: List of AWS target account IDs
-
 Conditions:
   IsTargetAccountPatchingExecutionPrerequisitesCondition: !Equals
     - !Ref DeployTargetAccountPatchingExecutionPrerequisites
@@ -138,11 +140,14 @@ Resources:
             Effect: Allow
             Principal:
               AWS:
-                - 'arn:aws:iam::${AWS::AccountId}:root'
+                - '*'
             Action: 
               - s3:PutObject
             Resource: 
               - !Sub 'arn:aws:s3:::${PipelineBucket}/*'
+            Condition:
+              StringEquals:
+                aws:PrincipalOrgID: !Ref OrgId
 
   # IAM Role for the deployment stage of the CodePipeline
   CodePipelineServiceDeployRole:
