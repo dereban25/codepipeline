@@ -25,20 +25,6 @@ phases:
 
   build:
     commands:
-      - pwd
-      - ls -la
-      # - echo "Finding the latest artifact in S3 $PIPELINE_BUCKET"
-      # - |
-      #   LATEST_ARTIFACT=$(aws s3api list-objects-v2 --bucket $PIPELINE_BUCKET --query "Contents | sort_by(@, &LastModified)[-1].Key" --output text)
-      #   echo "Latest artifact: $LATEST_ARTIFACT"
-
-      # - echo "Downloading the latest artifact from S3..."
-      # - aws s3 cp s3://$PIPELINE_BUCKET/$LATEST_ARTIFACT .
-
-      # - echo "Extracting artifact..."
-      # - FILE_NAME=$(basename $LATEST_ARTIFACT)
-      # - unzip $FILE_NAME -d extracted-artifacts || echo "Unzip failed"
-
       - echo "Zipping lambda code for Delete Snapshot..."
       - LAMBDA_DIR_DELETE_SNAPSHOT="$LAMBDA_CODE_DELETE_SNAPSHOT"
       - ZIP_FILE_NAME_DELETE_SNAPSHOT="$(basename $LAMBDA_DIR_DELETE_SNAPSHOT).zip"

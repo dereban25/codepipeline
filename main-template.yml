@@ -25,6 +25,7 @@ Parameters:
   OrgId:
     Type: String
     Description: "The AWS Organization ID for the current AWS Organization."
+    Default: o-gihnpgehpg
 
   StackName:
     Type: String
@@ -445,96 +446,96 @@ Resources:
                   }
               RunOrder: 3
         # Deploy Lambda function for snapshot deletion
-        - Name: DeployLambdaDeleteSnapshot
-          Actions:
-            - Name: DeployAction
-              ActionTypeId:
-                Category: Deploy
-                Owner: AWS
-                Provider: CloudFormation
-                Version: "1"
-              InputArtifacts:
-                - Name: SourceArtifact
-                - Name: SNSOutput
-              Configuration:
-                ActionMode: CREATE_UPDATE
-                StackName: !Ref StackName
-                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-                OutputFileName: LambdaDeleteSnapshotOutput.json
-                TemplatePath: !Sub SourceArtifact::${TemplateLambdaDeleteSnapshotPath}
-                TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationLambdaDeleteSnapshotPath}
-                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides: |
-                  {
-                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                    "S3Key" : "lambda_code/delete-snapshot.zip",
-                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
-                  }
-              RunOrder: 4
-              OutputArtifacts:
-                - Name: LambdaDeleteSnapshotOutput
-        # Deploy Lambda function for multi-account patching
-        - Name: DeployLambdaRunMultiAccountsPatching
-          Actions:
-            - Name: DeployAction
-              ActionTypeId:
-                Category: Deploy
-                Owner: AWS
-                Provider: CloudFormation
-                Version: "1"
-              InputArtifacts:
-                - Name: SourceArtifact
-                - Name: SNSOutput
-              Configuration:
-                ActionMode: CREATE_UPDATE
-                StackName: !Ref StackName
-                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-                OutputFileName: LambdaRunMultiAccountsPatchingOutput.json
-                TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatchingPath}
-                TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationLambdaRunMultiAccountsPatchingPath}
-                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                ParameterOverrides: |
-                  {
-                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                    "S3Key" : "lambda_code/run-multi-accounts-patching.zip"},
-                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
-                  }
-              RunOrder: 4
-              OutputArtifacts:
-                - Name: LambdaRunMultiAccountsPatchingOutput
-        # If patching is not planned for the master account, this step can be skipped.
-        # This action deploys the IAM roles and resource groups required for patching execution.
-        - !If 
-          - IsTargetAccountPatchingExecutionPrerequisitesCondition
-          - Name: DeployTargetAccountPatchingExecutionPrerequisites
-            Actions:
-              - Name: DeployAction
-                ActionTypeId:
-                  Category: Deploy
-                  Owner: AWS
-                  Provider: CloudFormation
-                  Version: "1"
-                InputArtifacts:
-                  - Name: SourceArtifact
-                  - Name: SNSOutput
-                  - Name: LambdaDeleteSnapshotOutput
-                  - Name: LambdaRunMultiAccountsPatchingOutput
-                Configuration:
-                  ActionMode: CREATE_UPDATE
-                  StackName: !Ref StackName
-                  Capabilities: CAPABILITY_NAMED_IAM
-                  TemplatePath: !Sub SourceArtifact::${TemplateTargetAccountPatchingExecutionPrerequisitesPath}
-                  TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationTargetAccountPatchingExecutionPrerequisitesPath}
-                  RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
-                  ParameterOverrides: !Sub  |
-                    {
-                      "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
-                      "MasterAccountNumber" : "${AWS::AccountId}",
-                      "StackName" : "${StackName}",
-                      "SnsTopicArn" : {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]},
-                      "LambdaDeleteSnapshotRole" : {"Fn::GetParam": ["LambdaDeleteSnapshotOutput", "LambdaDeleteSnapshotOutput.json", "LambdaDeleteSnapshotRole"]},
-                      "LambdaRunMultiAccountsPatchingRole" : {"Fn::GetParam": ["LambdaRunMultiAccountsPatchingOutput", "LambdaRunMultiAccountsPatchingOutput.json", "LambdaRunMultiAccountsPatchingRole"]},
-                    }
-                RunOrder: 5
-          - !Ref AWS::NoValue
+        # - Name: DeployLambdaDeleteSnapshot
+        #   Actions:
+        #     - Name: DeployAction
+        #       ActionTypeId:
+        #         Category: Deploy
+        #         Owner: AWS
+        #         Provider: CloudFormation
+        #         Version: "1"
+        #       InputArtifacts:
+        #         - Name: SourceArtifact
+        #         - Name: SNSOutput
+        #       Configuration:
+        #         ActionMode: CREATE_UPDATE
+        #         StackName: !Ref StackName
+        #         Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+        #         OutputFileName: LambdaDeleteSnapshotOutput.json
+        #         TemplatePath: !Sub SourceArtifact::${TemplateLambdaDeleteSnapshotPath}
+        #         TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationLambdaDeleteSnapshotPath}
+        #         RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+        #         ParameterOverrides: |
+        #           {
+        #             "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+        #             "S3Key" : "lambda_code/delete-snapshot.zip",
+        #             "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+        #           }
+        #       RunOrder: 4
+        #       OutputArtifacts:
+        #         - Name: LambdaDeleteSnapshotOutput
+        # # Deploy Lambda function for multi-account patching
+        # - Name: DeployLambdaRunMultiAccountsPatching
+        #   Actions:
+        #     - Name: DeployAction
+        #       ActionTypeId:
+        #         Category: Deploy
+        #         Owner: AWS
+        #         Provider: CloudFormation
+        #         Version: "1"
+        #       InputArtifacts:
+        #         - Name: SourceArtifact
+        #         - Name: SNSOutput
+        #       Configuration:
+        #         ActionMode: CREATE_UPDATE
+        #         StackName: !Ref StackName
+        #         Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+        #         OutputFileName: LambdaRunMultiAccountsPatchingOutput.json
+        #         TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatchingPath}
+        #         TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationLambdaRunMultiAccountsPatchingPath}
+        #         RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+        #         ParameterOverrides: |
+        #           {
+        #             "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+        #             "S3Key" : "lambda_code/run-multi-accounts-patching.zip"},
+        #             "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+        #           }
+        #       RunOrder: 4
+        #       OutputArtifacts:
+        #         - Name: LambdaRunMultiAccountsPatchingOutput
+        # # If patching is not planned for the master account, this step can be skipped.
+        # # This action deploys the IAM roles and resource groups required for patching execution.
+        # - !If 
+        #   - IsTargetAccountPatchingExecutionPrerequisitesCondition
+        #   - Name: DeployTargetAccountPatchingExecutionPrerequisites
+        #     Actions:
+        #       - Name: DeployAction
+        #         ActionTypeId:
+        #           Category: Deploy
+        #           Owner: AWS
+        #           Provider: CloudFormation
+        #           Version: "1"
+        #         InputArtifacts:
+        #           - Name: SourceArtifact
+        #           - Name: SNSOutput
+        #           - Name: LambdaDeleteSnapshotOutput
+        #           - Name: LambdaRunMultiAccountsPatchingOutput
+        #         Configuration:
+        #           ActionMode: CREATE_UPDATE
+        #           StackName: !Ref StackName
+        #           Capabilities: CAPABILITY_NAMED_IAM
+        #           TemplatePath: !Sub SourceArtifact::${TemplateTargetAccountPatchingExecutionPrerequisitesPath}
+        #           TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationTargetAccountPatchingExecutionPrerequisitesPath}
+        #           RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+        #           ParameterOverrides: !Sub  |
+        #             {
+        #               "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+        #               "MasterAccountNumber" : "${AWS::AccountId}",
+        #               "StackName" : "${StackName}",
+        #               "SnsTopicArn" : {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]},
+        #               "LambdaDeleteSnapshotRole" : {"Fn::GetParam": ["LambdaDeleteSnapshotOutput", "LambdaDeleteSnapshotOutput.json", "LambdaDeleteSnapshotRole"]},
+        #               "LambdaRunMultiAccountsPatchingRole" : {"Fn::GetParam": ["LambdaRunMultiAccountsPatchingOutput", "LambdaRunMultiAccountsPatchingOutput.json", "LambdaRunMultiAccountsPatchingRole"]},
+        #             }
+        #         RunOrder: 5
+        #   - !Ref AWS::NoValue
       ExecutionMode: QUEUED
