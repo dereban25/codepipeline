@@ -1,0 +1,541 @@
+# This CloudFormation template is designed to set up a multi-account patching pipeline using AWS CodePipeline and other AWS services.
+# It includes the creation and configuration of various resources required for patching operations, including:
+#
+# - **S3 Bucket**: To store pipeline artifacts and ensure secure access with versioning enabled.
+# - **IAM Roles**: Two IAM roles are created:
+#   - **CodePipelineServiceDeployRole**: Used by CodePipeline to deploy resources, with permissions for SNS, IAM, CloudFormation, S3, SSM, Lambda, and CodePipeline.
+#   - **CodePipelineServiceSourceRole**: Used by CodePipeline to interact with CodeBuild, S3, CodeStar Connections, and CloudFormation.
+# - **CodeBuild Project**: Responsible for validating templates and uploading artifacts. It uses a specified build spec and environment configuration.
+# - **CodePipeline**: The pipeline is divided into several stages:
+#   - **FetchSource**: Retrieves source code from a GitHub repository using a CodeStar connection.
+#   - **ExtractArtifactsToS3**: Processes and stores artifacts in the S3 bucket.
+#   - **DeploySNSTopic**: Deploys an SNS topic using a CloudFormation template, including configuration for the topic.
+#   - **DeploySSMDocument**: Deploys an SSM document used for automating patching operations, with parameters for SNS topic ARN.
+#   - **DeployLambdaDeleteSnapshot**: Deploys a Lambda function that handles snapshot deletions, with parameters for S3 bucket and SNS topic ARN.
+#   - **DeployLambdaRunMultiAccountsPatching**: Deploys a Lambda function that executes multi-account patching, with parameters for S3 bucket and SNS topic ARN.
+#   - **DeployTargetAccountPatchingExecutionPrerequisites**: Optionally deploys IAM roles and resource groups required for patching execution in target accounts. This step can be skipped if patching is not planned for the master account.
+#
+# The template uses parameters to define paths for CloudFormation templates, Lambda code locations, and other configuration details. It ensures all components are deployed and managed correctly within the pipeline.
+
+AWSTemplateFormatVersion: "2010-09-09"
+
+
+Parameters:
+
+  OrgId:
+    Type: String
+    Description: "The AWS Organization ID for the current AWS Organization."
+    Default: o-gihnpgehpg
+
+  StackName:
+    Type: String
+    Description: (Optional) Specify Stack Name
+    Default: "cp-PatchingMultiAccountsWithOnPrem"
+
+  # Source
+  CodestarConnection:
+    Type: String
+    Description: "(Required) ARN of the CodeStar connection for GitHub"
+    Default: "arn:aws:codestar-connections:us-east-1:007695491693:connection/b965019a-d6b5-4bfa-ab0b-2596e6996504"
+  GitHubFullRepositoryId:
+    Type: String
+    Description: "(Required) Repository name. Example: github_username/repository_name"
+    Default: "dereban25/codepipeline"
+  GitHubBranchName:
+    Type: String
+    Description: (Required) Specify the branch name
+    Default: "patching"
+
+  # TemplatePath
+  TemplateSNSTopicPath:
+    Type: String
+    Description: "(Required) CloudFormation template for creating SNS Topic"
+    Default: "templates/sns-topic.yml"
+  TemplateSSMDocumentPath:
+    Type: String
+    Description: "(Required) CloudFormation template for creating SSM Document"
+    Default: "templates/ssm-document.yml"
+  TemplateTargetAccountPatchingExecutionPrerequisitesPath:
+    Type: String
+    Description: "(Required) CloudFormation template for creating IAM Custom SSM Automation Execution Role"
+    Default: "templates/target-account-patching-execution-prerequisites.yml"
+  TemplateLambdaDeleteSnapshotPath:
+    Type: String
+    Description: "(Required) CloudFormation template for the Lambda function to delete snapshots"
+    Default: "templates/lambda-delete-snapshot.yml"
+  TemplateLambdaRunMultiAccountsPatchingPath:
+    Type: String
+    Description: "(Required) CloudFormation template for the Lambda function to run multi-accounts patching"
+    Default: "templates/lambda-run-multi-accounts-patching.yml"
+
+  # TemplateConfiguration
+  TemplateConfigurationSNSTopicPath:
+    Type: String
+    Description: "(Required) JSON file with parameters for the SNS topic"
+    Default: "parameters/sns-topic-parameters.json"
+
+  TemplateConfigurationTargetAccountPatchingExecutionPrerequisitesPath:
+    Type: String
+    Description: "(Required) JSON file with parameters for the IAM Custom SSM Automation Execution Role"
+    Default: "parameters/target-account-patching-execution-prerequisites.json"
+
+  TemplateConfigurationLambdaDeleteSnapshotPath:
+    Type: String
+    Description: "(Required) JSON file with parameters for the Lambda function to delete snapshots"
+    Default: "parameters/lambda-delete-snapshot-parameters.json"
+  TemplateConfigurationLambdaRunMultiAccountsPatchingPath:
+    Type: String
+    Description: "(Required) JSON file with parameters for the Lambda function to run lambda for multi accounts patching"
+    Default: "parameters/lambda-run-multi-accounts-patching-parameters.json"
+
+  # Lambda Code
+  LambdaCodeDeleteSnapshot:
+    Type: String
+    Description: "(Required) Path to the Lambda code for deleting snapshots"
+    Default: "lambda_code/delete-snapshot"
+  LambdaCodeRunMultiAccountsPatching:
+    Type: String
+    Description: "(Required) Path to the Lambda code for running multi-accounts patching"
+    Default: "lambda_code/run-multi-accounts-patching"
+
+  # CodeBuild Project Name
+  CodeBuildProjectName:
+    Type: String
+    Description: "(Optional) Name of the CodeBuild project"
+    Default: "TemplateValidationAndArtifactUpload"
+
+  DeployTargetAccountPatchingExecutionPrerequisites:
+    Type: String
+    AllowedValues: ["Yes","No"]
+    Description: "Deploy IAM roles and resources groups for patching execution in target accounts"
+    Default: 'Yes'
+
+Conditions:
+  IsTargetAccountPatchingExecutionPrerequisitesCondition: !Equals
+    - !Ref DeployTargetAccountPatchingExecutionPrerequisites
+    - 'Yes'
+
+Resources:
+  # S3 bucket for storing pipeline artifacts
+  PipelineBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'codepipeline-${AWS::AccountId}-${AWS::Region}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+
+  # Bucket Policy to allow PutObject action from another account
+  PipelineBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref PipelineBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowPutObjectFromTargetAccount
+            Effect: Allow
+            Principal:
+              AWS:
+                - '*'
+            Action: 
+              - s3:PutObject
+            Resource: 
+              - !Sub 'arn:aws:s3:::${PipelineBucket}/*'
+            Condition:
+              StringEquals:
+                aws:PrincipalOrgID: !Ref OrgId
+
+  # IAM Role for the deployment stage of the CodePipeline
+  CodePipelineServiceDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CodePipelineServiceDeployRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+  CodePipelineServiceDeployRoleInlinePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CodePipelineServiceDeployRoleInlinePolicy
+      Roles:
+        - Ref: CodePipelineServiceDeployRole
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "SNS"
+            Effect: Allow
+            Action:
+              - sns:Publish
+              - sns:GetTopicAttributes
+              - sns:DeleteTopic
+              - sns:CreateTopic
+              - sns:Subscribe
+              - sns:Unsubscribe
+            Resource:
+              - !Sub 'arn:aws:sns:${AWS::Region}:${AWS::AccountId}:*'
+              - "*"
+          - Sid: "IAMPassRole"
+            Effect: Allow
+            Action:
+              - iam:PassRole
+            Resource:
+              - "*"
+          - Sid: "IAM"
+            Effect: Allow
+            Action:
+              - iam:DeleteRole
+              - iam:GetRole
+              - iam:GetRolePolicy
+              - iam:ListAttachedRolePolicies
+              - iam:ListRolePolicies
+              - iam:CreateRole
+              - iam:PutRolePolicy
+              - iam:DeleteRolePolicy
+            Resource:
+              - "*"
+          - Sid: "CloudFormation"
+            Effect: Allow
+            Action:
+              - cloudformation:CreateStack
+              - cloudformation:DeleteStack
+              - cloudformation:DescribeStacks
+              - cloudformation:CreateChangeSet
+            Resource:
+              - !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}*'
+              - "*"
+          - Sid: "S3Access"
+            Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:GetObjectVersion
+              - s3:ListBucket
+            Resource:
+              - !Sub 'arn:aws:s3:::codepipeline-${AWS::AccountId}-${AWS::Region}/*'
+          - Sid: "SSM"
+            Effect: Allow
+            Action:
+              - ssm:CreateDocument
+              - ssm:DeleteDocument
+              - ssm:GetDocument
+              - ssm:ListTagsForResource
+            Resource:
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:document/PatchInstanceWith-Rollback-OnPrem-KeepSnapshot'
+          - Sid: "Lambda"
+            Effect: Allow
+            Action:
+              - lambda:DeleteFunction
+              - lambda:GetFunction
+              - lambda:GetRuntimeManagementConfig
+              - lambda:CreateFunction
+              - lambda:InvokeFunction
+              - lambda:GetFunctionCodeSigningConfig
+              - lambda:TagResource
+              - lambda:PutRuntimeManagementConfig
+              - lambda:DeleteFunctionEventInvokeConfig
+              - lambda:RemovePermission
+              - lambda:AddPermission
+            Resource:
+              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function/LambdaDeleteSnapshot'
+              - "*"
+          - Sid: "Events"
+            Effect: Allow
+            Action:
+              - events:DescribeRule
+              - events:PutRule
+              - events:PutTargets
+              - events:RemoveTargets
+              - events:DeleteRule
+            Resource: "*"
+          - Sid: "CodePipeline"
+            Effect: Allow
+            Action:
+              - codepipeline:DeletePipeline
+              - codepipeline:UpdatePipeline
+              - codepipeline:CreatePipeline
+              - codepipeline:GetPipeline
+            Resource: "*"
+
+  # IAM Role for the source stage of the CodePipeline
+  CodePipelineServiceSourceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CodePipelineServiceSourceRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+                - codebuild.amazonaws.com
+            Action: sts:AssumeRole
+  CodePipelineServiceSourceRoleInlinePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CodePipelineServiceSourceRoleInlinePolicy
+      Roles:
+        - Ref: CodePipelineServiceSourceRole
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:ListBucket
+            Resource:
+              - !Sub 'arn:aws:s3:::codepipeline-${AWS::AccountId}-${AWS::Region}'
+              - !Sub 'arn:aws:s3:::codepipeline-${AWS::AccountId}-${AWS::Region}/*'
+          - Effect: Allow
+            Action:
+              - codestar-connections:UseConnection
+            Resource:
+              # - !Ref CodestarConnection
+              - "*"
+          - Effect: Allow
+            Action:
+              - cloudformation:DescribeStacks
+              - cloudformation:CreateStack
+              - cloudformation:DeleteStack
+              - cloudformation:UpdateStack
+            Resource: !Sub 'arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${StackName}*/*'
+          - Effect: Allow
+            Action:
+              - iam:PassRole
+            Resource: !GetAtt CodePipelineServiceDeployRole.Arn
+          - Effect: Allow
+            Action:
+              - codebuild:StartBuild
+              - codebuild:BatchGetBuilds
+              - codebuild:BatchGetProjects
+              - codebuild:ListBuildsForProject
+              - codebuild:ListProjects
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*'
+
+  # CodeBuild definition
+  TemplateValidationAndArtifactUploadProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Ref CodeBuildProjectName
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: "buildspec.yml"
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:5.0
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: PIPELINE_BUCKET
+            Type: PLAINTEXT
+            Value: !Ref PipelineBucket
+          - Name: LAMBDA_CODE_DELETE_SNAPSHOT
+            Type: PLAINTEXT
+            Value: !Ref LambdaCodeDeleteSnapshot
+          - Name: LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING
+            Type: PLAINTEXT
+            Value: !Ref LambdaCodeRunMultiAccountsPatching
+      ServiceRole: !GetAtt CodePipelineServiceSourceRole.Arn
+      TimeoutInMinutes: 5
+      Description: "CodeBuild project for the Patching pipeline"
+
+  # CodePipeline definition
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    DependsOn: CodePipelineServiceSourceRoleInlinePolicy
+    Properties:
+      Name: MultiAccountPatchingPipeline
+      RoleArn: !GetAtt CodePipelineServiceSourceRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref PipelineBucket
+      PipelineType: V2
+      RestartExecutionOnUpdate: true
+      Stages:
+        # Fetch source code from GitHub
+        - Name: FetchSource
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeStarSourceConnection
+                Version: "1"
+              Configuration:
+                ConnectionArn: !Ref CodestarConnection
+                FullRepositoryId: !Ref GitHubFullRepositoryId
+                BranchName: !Ref GitHubBranchName
+                DetectChanges: true
+              RunOrder: 1
+              OutputArtifacts:
+                - Name: SourceArtifact
+        # Upload zip archives to S3
+        - Name: ExtractArtifactsToS3
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref CodeBuildProjectName
+              InputArtifacts:
+                - Name: SourceArtifact
+              RunOrder: 2
+        # Deploy SNS Topic and configure Subscription
+        - Name: DeploySNSTopic
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              InputArtifacts:
+                - Name: SourceArtifact
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub '${StackName}-SNSTopic'
+                Capabilities: CAPABILITY_NAMED_IAM
+                OutputFileName: SNSOutput.json
+                TemplatePath: !Sub SourceArtifact::${TemplateSNSTopicPath}
+                TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationSNSTopicPath}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+              RunOrder: 2
+              OutputArtifacts:
+                - Name: SNSOutput
+        # Deploy SSM custom document for automating patching across instances, including on-premises environments
+        - Name: DeploySSMDocument
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              InputArtifacts:
+                - Name: SourceArtifact
+                - Name: SNSOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub '${StackName}-SSMDocument'
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: !Sub SourceArtifact::${TemplateSSMDocumentPath}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+                ParameterOverrides: |
+                  {
+                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                  }
+              RunOrder: 3
+        # Deploy Lambda function for snapshot deletion
+        - Name: DeployLambdaDeleteSnapshot
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              InputArtifacts:
+                - Name: SourceArtifact
+                - Name: SNSOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub '${StackName}-LambdaDeleteSnapshot'
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                OutputFileName: LambdaDeleteSnapshotOutput.json
+                TemplatePath: !Sub SourceArtifact::${TemplateLambdaDeleteSnapshotPath}
+                TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationLambdaDeleteSnapshotPath}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+                ParameterOverrides: |
+                  {
+                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                    "S3Key" : "lambda_code/delete-snapshot.zip",
+                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                  }
+              RunOrder: 4
+              OutputArtifacts:
+                - Name: LambdaDeleteSnapshotOutput
+        # Deploy Lambda function for multi-account patching
+        - Name: DeployLambdaRunMultiAccountsPatching
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: CloudFormation
+                Version: "1"
+              InputArtifacts:
+                - Name: SourceArtifact
+                - Name: SNSOutput
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                StackName: !Sub '${StackName}-LambdaRunMultiAccountsPatching'
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                OutputFileName: LambdaRunMultiAccountsPatchingOutput.json
+                TemplatePath: !Sub SourceArtifact::${TemplateLambdaRunMultiAccountsPatchingPath}
+                TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationLambdaRunMultiAccountsPatchingPath}
+                RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+                ParameterOverrides: |
+                  {
+                    "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                    "S3Key" : "lambda_code/run-multi-accounts-patching.zip"},
+                    "SnsTopicArn": {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]}
+                  }
+              RunOrder: 4
+              OutputArtifacts:
+                - Name: LambdaRunMultiAccountsPatchingOutput
+        # If patching is not planned for the master account, this step can be skipped.
+        # This action deploys the IAM roles and resource groups required for patching execution.
+        - !If 
+          - IsTargetAccountPatchingExecutionPrerequisitesCondition
+          - Name: DeployTargetAccountPatchingExecutionPrerequisites
+            Actions:
+              - Name: DeployAction
+                ActionTypeId:
+                  Category: Deploy
+                  Owner: AWS
+                  Provider: CloudFormation
+                  Version: "1"
+                InputArtifacts:
+                  - Name: SourceArtifact
+                  - Name: SNSOutput
+                  - Name: LambdaDeleteSnapshotOutput
+                  - Name: LambdaRunMultiAccountsPatchingOutput
+                Configuration:
+                  ActionMode: CREATE_UPDATE
+                  StackName: !Ref StackName
+                  Capabilities: CAPABILITY_NAMED_IAM
+                  TemplatePath: !Sub SourceArtifact::${TemplateTargetAccountPatchingExecutionPrerequisitesPath}
+                  TemplateConfiguration: !Sub SourceArtifact::${TemplateConfigurationTargetAccountPatchingExecutionPrerequisitesPath}
+                  RoleArn: !GetAtt CodePipelineServiceDeployRole.Arn
+                  ParameterOverrides: !Sub  |
+                    {
+                      "S3Bucket" : { "Fn::GetArtifactAtt" : ["SourceArtifact", "BucketName"]},
+                      "MasterAccountNumber" : "${AWS::AccountId}",
+                      "StackName" : "${StackName}",
+                      "SnsTopicArn" : {"Fn::GetParam": ["SNSOutput", "SNSOutput.json", "SnsTopicArn"]},
+                      "LambdaDeleteSnapshotRole" : {"Fn::GetParam": ["LambdaDeleteSnapshotOutput", "LambdaDeleteSnapshotOutput.json", "LambdaDeleteSnapshotRole"]},
+                      "LambdaRunMultiAccountsPatchingRole" : {"Fn::GetParam": ["LambdaRunMultiAccountsPatchingOutput", "LambdaRunMultiAccountsPatchingOutput.json", "LambdaRunMultiAccountsPatchingRole"]},
+                    }
+                RunOrder: 5
+          - !Ref AWS::NoValue
+      ExecutionMode: QUEUED

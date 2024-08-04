@@ -1,0 +1,244 @@
+# This CloudFormation template sets up IAM roles and policies required for EC2 instances and Lambda functions involved in patching automation.
+# It also creates a resource group for managing patching-related resources.
+
+# **Parameters:**
+# - **StackName**: (Optional) Name of the stack. Defaults to 'cp-PatchingMultiAccountsWithOnPrem'.
+# - **SSMInstanceProfileRole**: IAM role name for EC2 instances to interact with SSM. Defaults to 'AWSEC2RoleforSSM'.
+# - **LambdaDeleteSnapshotRole**: IAM role name for Lambda functions involved in snapshot deletion. Defaults to 'LambdaDeleteSnapshotRole'.
+# - **AutomationExecutionRoleName**: IAM role name for SSM patching automation. Defaults to 'Custom-SystemsManager-AutomationExecutionRole'.
+# - **MasterAccountNumber**: Account number where patching will start.
+# - **BucketName**: S3 bucket name for storing reports in the master account.
+# - **SnsTopicArn**: ARN of the SNS topic used for notifications.
+# - **ResourceGroup**: Name of the resource group for patching-related resources. Defaults to 'PatchingGroup'.
+# - **TagKey**: Tag key used for filtering resources. Defaults to 'Stage'.
+# - **TagValue**: Tag value used for filtering resources. Defaults to 'ForPatching'.
+
+# **Resources:**
+# - **SSMInstanceRole**: IAM role for EC2 instances to interact with AWS Systems Manager (SSM).
+#   - **RoleName**: Set to the value provided in the **SSMInstanceProfileRole** parameter.
+#   - **AssumeRolePolicyDocument**: Policy allowing EC2 instances to assume this role.
+#   - **ManagedPolicyArns**: Attach the AmazonEC2RoleforSSM and AmazonSSMManagedInstanceCore managed policies.
+
+# - **AWSSystemsManagerAutomationExecutionRole**: IAM role for executing SSM Automation tasks.
+#   - **RoleName**: Set to the value provided in the **AutomationExecutionRoleName** parameter.
+#   - **AssumeRolePolicyDocument**: Policy allowing specific roles and SSM service to assume this role.
+#     - Principals include roles for Lambda functions and SSM services, with specific conditions for SSM automation executions.
+
+# - **CustomSystemsManagerAutomationExecutionRoleInlinePolicy**: Inline policy attached to the SSM automation execution role.
+#   - **PolicyName**: Named 'Custom-SystemsManager-AutomationExecutionRoleInlinePolicy'.
+#   - **PolicyDocument**: Contains permissions required for:
+#     - **EC2**: Actions like creating and deleting snapshots, tagging, and describing EC2 instances and volumes.
+#     - **IAM**: Actions related to role management and permissions.
+#     - **PassRole**: Permissions to pass specified IAM roles.
+#     - **Lambda**: Actions for managing Lambda functions.
+#     - **SSM**: Permissions for SSM commands and automation executions.
+#     - **SNS**: Permissions to publish to the specified SNS topic.
+#     - **CloudFormation**: Permissions for stack creation, deletion, and description.
+#     - **S3**: Permissions for accessing objects in the specified S3 bucket.
+#     - **ResourceGroupTaggingAPI**: Permission to get resources by tags.
+#     - **AWSResourceGroups**: Permission to list resources in resource groups.
+
+# - **
+
+
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  StackName:
+    Type: String
+    Description: (Optional) Specify Stack Name
+    Default: 'cp-PatchingMultiAccountsWithOnPrem'
+
+  SSMInstanceProfileRole:
+    Type: String
+    Description: Name for the IAM role for SSM for EC2
+    Default: AWSEC2RoleforSSM
+
+  LambdaDeleteSnapshotRole:
+    Type: String
+    Description: Name for the IAM role for Lambda Delete Snapshot Role
+    Default: LambdaDeleteSnapshotRole
+
+  LambdaRunMultiAccountsPatchingRole:
+    Type: String
+    Description: Name for the IAM role for Lambda Run Multi Accounts Patching Role
+    Default: LambdaRunMultiAccountsPatchingRole
+
+  AutomationExecutionRole:
+    Type: String
+    Description: Name for the IAM role for SSM Patching Automation
+    Default: Custom-SystemsManager-AutomationExecutionRole
+
+  MasterAccountNumber:
+    Type: Number
+    Description: Master account number where patching will begin
+
+  BucketName:
+    Type: String
+    Description: Report storage S3 bucket on Master account
+
+  SnsTopicArn:
+    Type: String
+    Description: ARN sns
+
+  ResourceGroup:
+    Type: String
+    Description: Name for the Resource Group for patching-related resources
+    Default: PatchingGroup
+
+  TagKey:
+    Type: String
+    Description: Tag key used for filtering resources
+    Default: Stage
+
+  TagValue:
+    Type: String
+    Description: Tag value used for filtering resources
+    Default: ForPatching
+
+Resources:
+  
+  SSMInstanceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Ref SSMInstanceProfileRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 'ec2.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM'
+        - 'arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore'
+
+
+  AWSSystemsManagerAutomationExecutionRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Ref AutomationExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub 'arn:${AWS::Partition}:iam::${MasterAccountNumber}:role/${LambdaRunMultiAccountsPatchingRole}'
+                - !Sub 'arn:${AWS::Partition}:iam::${MasterAccountNumber}:role/${LambdaDeleteSnapshotRole}'
+                - !Sub 'arn:${AWS::Partition}:iam::${MasterAccountNumber}:role/AWS-SystemsManager-AutomationAdministrationRole'
+            Action: 'sts:AssumeRole'
+          - Effect: Allow
+            Principal:
+              Service: 'ssm.amazonaws.com'
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Sub '${AWS::AccountId}'
+              ArnLike:
+                aws:SourceArn: !Sub 'arn:${AWS::Partition}:ssm:*:${AWS::AccountId}:automation-execution/*'
+
+  CustomSystemsManagerAutomationExecutionRoleInlinePolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: Custom-SystemsManager-AutomationExecutionRoleInlinePolicy
+      Roles:
+        - !Ref AWSSystemsManagerAutomationExecutionRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: 'EC2'
+            Effect: Allow
+            Action:
+              - 'ec2:CreateTags'
+              - 'ec2:CreateSnapshot'
+              - 'ec2:DescribeSnapshots'
+              - 'ec2:DescribeInstanceStatus'
+              - 'ec2:DescribeVolumes'
+              - 'ec2:DeleteSnapshot'
+              - 'ec2:DescribeSnapshotAttribute'
+            Resource: '*'
+          - Sid: 'IAM'
+            Effect: Allow
+            Action:
+              - 'iam:DeleteRole'
+              - 'iam:GetRole'
+              - 'iam:GetRolePolicy'
+              - 'iam:ListAttachedRolePolicies'
+              - 'iam:ListRolePolicies'
+              - 'iam:CreateRole'
+              - 'iam:PutRolePolicy'
+              - 'iam:DeleteRolePolicy'
+            Resource: '*'
+          - Sid: 'PassRole'
+            Effect: Allow
+            Action: 'iam:PassRole'
+            Resource:
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${AutomationExecutionRole}'
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${StackName}*'
+          - Sid: 'Lambda'
+            Effect: Allow
+            Action:
+              - 'lambda:DeleteFunction'
+              - 'lambda:GetFunction'
+              - 'lambda:GetRuntimeManagementConfig'
+              - 'lambda:CreateFunction'
+              - 'lambda:InvokeFunction'
+              - 'lambda:GetFunctionCodeSigningConfig'
+            Resource: '*'
+          - Sid: 'SSM'
+            Effect: Allow
+            Action:
+              - 'ssm:SendCommand'
+              - 'ssm:DescribeInstanceInformation'
+              - 'ssm:ListCommands'
+              - 'ssm:ListCommandInvocations'
+              - 'ssm:StartAutomationExecution'
+              - 'ssm:DescribeAutomationExecutions'
+              - 'ssm:GetAutomationExecution'
+              - 'ssm:DescribeAutomationStepExecutions'
+            Resource: '*'
+          - Sid: 'SNS'
+            Effect: Allow
+            Action:
+              - 'sns:Publish'
+            Resource: !Ref SnsTopicArn
+          - Sid: 'CloudFormation'
+            Effect: Allow
+            Action:
+              - 'cloudformation:CreateStack'
+              - 'cloudformation:DeleteStack'
+              - 'cloudformation:DescribeStacks'
+            Resource: '*'
+          - Sid: 'S3'
+            Effect: Allow
+            Action:
+              - 's3:PutObject'
+              - 's3:GetObject'
+              - 's3:ListBucket'
+            Resource:
+              - !Sub 'arn:aws:s3:::${BucketName}/*' 
+          - Sid: 'ResourceGroupTaggingAPI'
+            Effect: Allow
+            Action:
+              - 'tag:GetResources'
+            Resource: '*'
+          - Sid: 'AWSResourceGroups'
+            Effect: Allow
+            Action:
+              - 'resource-groups:ListGroupResources'
+            Resource: '*'
+
+  PatchingGroupResource:
+    Type: 'AWS::ResourceGroups::Group'
+    Properties:
+      Name: !Ref ResourceGroup
+      Description: 'Resource Group for patching-related resources'
+      ResourceQuery:
+        Type: 'TAG_FILTERS_1_0'
+        Query:
+          ResourceTypeFilters:
+            - 'AWS::EC2::Instance'
+          TagFilters:
+            - Key: !Ref TagKey
+              Values:
+                - !Ref TagValue

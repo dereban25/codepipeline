@@ -1,0 +1,21 @@
+{
+    "Parameters": {
+      "LambdaFunctionName": "LambdaRunMultiAccountsPatching",
+      "TargetLocationMaxErrors": "1",
+      "ExecutionRoleName": "Custom-SystemsManager-AutomationExecutionRole",
+      "DocumentName": "PatchInstanceWithRollbackKeepSnapshot",
+      "ExceptMasterAccount": "False",
+      "ExceptionAccountIds": "905418384534",
+      "TargetRegionIds": "us-east-1",
+      "ResourceGroupName": "PatchingGroup",
+      "TargetLocationMaxConcurrency": "10",
+      "LambdaRoleName": "LambdaRunMultiAccountsPatchingRole"
+    }
+  }
+  
+
+
+
+  "ExecutionRoleName": "AWS-SystemsManager-AutomationExecutionRole",
+  "DocumentName": "PatchInstanceWithRollbackKeepSnapshot",
+  "AutomationAssumeRole": "AWS-SystemsManager-AutomationAdministrationRole",
