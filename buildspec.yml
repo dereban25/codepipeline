@@ -20,8 +20,8 @@ phases:
 
   pre_build:
     commands:
-      # - echo Checking CloudFormation templates...
-      # - cfn-lint templates/*.yml
+      - echo Checking CloudFormation templates...
+      - cfn-lint templates/*.yml
 
   build:
     commands:
