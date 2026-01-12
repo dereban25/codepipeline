@@ -1,0 +1,8 @@
+# Deployment Configuration
+# This file specifies the path to the CloudFormation template and includes tags for resource management.
+
+template-file-path: './main-template.yml'
+
+tags:
+  Name: 'gitsync'
+  Project: 'Patching'

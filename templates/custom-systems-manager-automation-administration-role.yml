@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+
+  OrgId:
+    Type: String
+    Description: "The AWS Organization ID for the current AWS Organization."
+    
+  AutomationAdministrationRole:
+    Type: String
+    Description: Name for the IAM role for SSM Patching Automation
+    Default: Custom-SystemsManager-AutomationAdministrationRole
+
+  AutomationExecutionRole:
+    Type: String
+    Description: Name for the IAM role for SSM Patching Automation
+    Default: Custom-SystemsManager-AutomationExecutionRole
+
+Resources:
+  AWSSystemsManagerAutomationAdministrationRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Ref AutomationAdministrationRole
+      Description: Role with permissions to manage and execute AWS Systems Manager Automation tasks.
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: '*'
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                aws:PrincipalOrgID: !Ref OrgId
+          - Effect: Allow
+            Principal:
+              Service: 'ssm.amazonaws.com'
+            Action: 'sts:AssumeRole'
+
+  CustomSystemsManagerAutomationAdministrationRoleInlinePolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: Custom-SystemsManager-AutomationExecutionRoleInlinePolicy
+      Roles:
+        - !Ref AWSSystemsManagerAutomationAdministrationRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: "STS"
+            Effect: "Allow"
+            Action: "sts:AssumeRole"
+            Resource: !Sub 'arn:aws:iam::*:role/${AutomationExecutionRole}'

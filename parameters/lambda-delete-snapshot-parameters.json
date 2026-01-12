@@ -1,0 +1,13 @@
+{
+    "Parameters": {
+      "Days": "2",
+      "ExceptionAccountIds": "",
+      "ExceptMasterAccount": "False",
+      "RegionsToProcess": "us-east-1",
+      "ExecutionRoleName": "AWS-SystemsManager-AutomationExecutionRole",
+      "TagKey": "Patching",
+      "TagValue": "DeleteAllow",
+      "LambdaRoleName": "LambdaDeleteSnapshotRole",
+      "LambdaFunctionName": "LambdaDeleteSnapshot"
+    }
+  }

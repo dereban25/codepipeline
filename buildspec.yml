@@ -1,0 +1,59 @@
+# This CodeBuild buildspec file defines the process for building and packaging Lambda functions.
+# It consists of the following stages:
+# 
+# - **install**: Installs necessary dependencies including the AWS CLI and `cfn-lint` for linting CloudFormation templates.
+# - **pre_build**: Lints CloudFormation templates to ensure they adhere to best practices and syntax.
+# - **build**: 
+#   - Identifies and downloads the most recent artifact from an S3 bucket.
+#   - Extracts the artifact to access its contents.
+#   - Packages Lambda function code by zipping directories for "Delete Snapshot" and "Run Multi Accounts Patching".
+#   - Uploads the zipped Lambda code back to the S3 bucket.
+# - **post_build**: Cleans up temporary files generated during the build process.
+
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - pip install --upgrade awscli cfn-lint
+
+  pre_build:
+    commands:
+      - echo Checking CloudFormation templates...
+      - cfn-lint templates/*.yml
+
+  build:
+    commands:
+      - echo "Zipping lambda code for Delete Snapshot..."
+      - LAMBDA_DIR_DELETE_SNAPSHOT="$LAMBDA_CODE_DELETE_SNAPSHOT"
+      - ZIP_FILE_NAME_DELETE_SNAPSHOT="$(basename $LAMBDA_DIR_DELETE_SNAPSHOT).zip"
+      - cd $LAMBDA_DIR_DELETE_SNAPSHOT || { echo "Failed to change directory to $LAMBDA_DIR_DELETE_SNAPSHOT"; exit 1; }
+      - zip -r ../$ZIP_FILE_NAME_DELETE_SNAPSHOT . || { echo "Zipping Delete Snapshot failed"; exit 1; }
+      - cd - || { echo "Failed to return to previous directory"; exit 1; }
+
+
+      - echo "Zipping lambda code for Run Multi Accounts Patching..."
+      - LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING="$LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING"
+      - ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING="$(basename $LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING).zip"
+      - echo "extracted-artifacts/$LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING"
+      - cd $LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING || { echo "Failed to change directory to $LAMBDA_DIR_RUN_MULTI_ACCOUNTS_PATCHING"; exit 1; }
+      - zip -r ../$ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING . || { echo "Zipping Run Multi Accounts Patching failed"; exit 1; }
+      - cd - || { echo "Failed to return to previous directory"; exit 1; }
+
+      - DIR_LAMBDA_CODE_DELETE_SNAPSHOT="${LAMBDA_CODE_DELETE_SNAPSHOT%%/*}"
+      - echo "Copying $ZIP_FILE_NAME_DELETE_SNAPSHOT to the target S3 bucket..."
+      - aws s3 cp --force $DIR_LAMBDA_CODE_DELETE_SNAPSHOT/$ZIP_FILE_NAME_DELETE_SNAPSHOT s3://$PIPELINE_BUCKET/$DIR_LAMBDA_CODE_DELETE_SNAPSHOT/$ZIP_FILE_NAME_DELETE_SNAPSHOT
+
+      - DIR_LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING="${LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING%%/*}"
+      - echo "Copying $ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING to the target S3 bucket..."
+      - aws s3 cp --force $DIR_LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING/$ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING s3://$PIPELINE_BUCKET/$DIR_LAMBDA_CODE_RUN_MULTI_ACCOUNTS_PATCHING/$ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING
+
+  post_build:
+    commands:
+      - echo Cleaning up temporary files...
+      - rm -rf extracted-artifacts $LATEST_ARTIFACT $ZIP_FILE_NAME_DELETE_SNAPSHOT $ZIP_FILE_NAME_RUN_MULTI_ACCOUNTS_PATCHING
+
+artifacts:
+  files:
+    - '**/*'
